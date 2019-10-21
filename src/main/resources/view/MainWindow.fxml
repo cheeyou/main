@@ -22,8 +22,8 @@
         <URL value="@DarkTheme.css" />
         <URL value="@Extensions.css" />
       </stylesheets>
-
-      <VBox>
+      <SplitPane>
+        <VBox>
         <MenuBar fx:id="menuBar" VBox.vgrow="NEVER">
           <Menu mnemonicParsing="false" text="File">
             <MenuItem mnemonicParsing="false" onAction="#handleExit" text="Exit" />
@@ -34,6 +34,7 @@
         </MenuBar>
 
         <StackPane VBox.vgrow="NEVER" fx:id="commandBoxPlaceholder" styleClass="pane-with-border">
+
           <padding>
             <Insets top="5" right="10" bottom="5" left="10" />
           </padding>
@@ -54,7 +55,12 @@
         </VBox>
 
         <StackPane fx:id="statusbarPlaceholder" VBox.vgrow="NEVER" />
-      </VBox>
+        </VBox>
+        <SplitPane orientation="VERTICAL" dividerPositions="100">
+          <VBox minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="20.0"/>
+          <VBox minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="20.0"/>
+        </SplitPane>
+      </SplitPane>
     </Scene>
   </scene>
 </fx:root>

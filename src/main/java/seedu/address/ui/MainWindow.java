@@ -4,7 +4,9 @@ import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Orientation;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
@@ -36,6 +38,12 @@ public class MainWindow extends UiPart<Stage> {
     private HelpWindow helpWindow;
 
     @FXML
+    private SplitPane verticalDivision;
+
+    @FXML
+    private SplitPane horizontalDivision;
+
+    @FXML
     private StackPane commandBoxPlaceholder;
 
     @FXML
@@ -63,6 +71,7 @@ public class MainWindow extends UiPart<Stage> {
         setAccelerators();
 
         helpWindow = new HelpWindow();
+
     }
 
     public Stage getPrimaryStage() {
@@ -107,6 +116,11 @@ public class MainWindow extends UiPart<Stage> {
      * Fills up all the placeholders of this window.
      */
     void fillInnerParts() {
+        verticalDivision = new SplitPane();
+        horizontalDivision = new SplitPane();
+        horizontalDivision.setOrientation(Orientation.HORIZONTAL);;
+        verticalDivision.setOrientation(Orientation.VERTICAL);
+
         personListPanel = new PersonListPanel(logic.getFilteredPersonList());
         personListPanelPlaceholder.getChildren().add(personListPanel.getRoot());
 
