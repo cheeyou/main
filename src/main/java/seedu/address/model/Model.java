@@ -1,7 +1,6 @@
 package seedu.address.model;
 
 import java.nio.file.Path;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
@@ -143,7 +142,7 @@ public interface Model {
 
     boolean hasDriver(int driverId);
 
-    Optional<Driver> getDriver(int driverId);
+    Driver getDriver(int driverId);
 
     void setDriver(Driver driverToEdit, Driver editedTask);
 
