@@ -2,7 +2,6 @@ package seedu.address.model;
 
 import javafx.collections.ObservableList;
 
-import seedu.address.model.EntityManager;
 import seedu.address.model.person.Customer;
 import seedu.address.model.person.exceptions.PersonNotFoundException;
 
