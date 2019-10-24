@@ -2,6 +2,8 @@ package seedu.address.model.person;
 
 import java.util.Set;
 
+import seedu.address.model.EventTime;
+import seedu.address.model.person.exceptions.SchedulingException;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -16,6 +18,7 @@ public class Driver extends Person {
 
     //data fields
     private Schedule schedule;
+    public static final String MESSAGE_INVALID_ID = "Invalid driver ID.";
 
     /**
      * Every field must be present and not null.
@@ -37,6 +40,42 @@ public class Driver extends Person {
 
     public Schedule getSchedule() {
         return schedule;
+    }
+
+    public String suggestTime(EventTime eventTime) {
+        return this.schedule.getSchedulingSuggestion(eventTime);
+    }
+
+    public void assign(EventTime eventTime) throws SchedulingException {
+        this.schedule.add(eventTime);
+    }
+
+    public boolean isSameDriver(Driver otherDriver) {
+        if (otherDriver == this) {
+            return true;
+        }
+
+        return otherDriver != null
+                && otherDriver.getName().equals(getName())
+                && (otherDriver.getPhone().equals(getPhone()) || otherDriver.getEmail().equals(getEmail()));
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+
+        if (!(other instanceof Driver)) {
+            return false;
+        }
+
+        Driver otherDriver = (Driver) other;
+        return otherDriver.getName().equals(getName())
+                && otherDriver.getPhone().equals(getPhone())
+                && otherDriver.getEmail().equals(getEmail())
+                && otherDriver.getAddress().equals(getAddress())
+                && otherDriver.getTags().equals(getTags());
     }
 
     /**

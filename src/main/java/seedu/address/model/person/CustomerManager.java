@@ -1,0 +1,53 @@
+package seedu.address.model.person;
+
+import seedu.address.model.EntityManager;
+import seedu.address.model.person.exceptions.PersonNotFoundException;
+
+/**
+ * Manages the customer list.
+ * It contains the minimal set of list operations.
+ */
+public class CustomerManager extends EntityManager<Customer> {
+
+    public CustomerManager() {
+        super();
+    }
+
+    /**
+     * Retrieve customer using its unique customer id.
+     *
+     * @param customerId customer unique id.
+     * @return Customer with the specified unique id.
+     */
+    public Customer getCustomer(int customerId) {
+        return getPersonList()
+                .stream()
+                .filter(customer -> customer.getId() == customerId)
+                .findFirst()
+                .orElseThrow(PersonNotFoundException::new);
+    }
+
+    /**
+     * Checks if the customer list has a customer with {@code Customer customer}.
+     *
+     * @param customer customer to be checked
+     */
+    public boolean hasCustomer(Customer customer) {
+        return super.hasPerson(customer);                       //is this okay? i mean its a person not a customer
+    }
+
+    /**
+     * Checks if the customer list has a customer with {@code int customerId}.
+     *
+     * @param customerId customer unique id.
+     */
+    public boolean hasCustomer(int customerId) {
+        return getPersonList()
+                .stream()
+                .anyMatch(customer -> customer.getId() == customerId);
+    }
+
+    public void setCustomer(Customer customerToEdit, Customer editedCustomer) {
+        super.setPerson(customerToEdit, editedCustomer);
+    }
+}

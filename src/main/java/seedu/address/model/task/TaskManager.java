@@ -41,7 +41,15 @@ public class TaskManager {
         return tasks.getTask(taskId);
     }
 
-    public void updateTask(Task taskToUpdate) {
-        tasks.updateTask(taskToUpdate);
+    public void setTask(Task taskToEdit, Task editedTask) {
+        tasks.setTask(taskToEdit, editedTask);
+    }
+
+    public boolean hasTask(Task task) {
+        return tasks.hasTask(task);
+    }
+
+    public boolean hasTask(int taskId) {
+        return tasks.hasTask(taskId);
     }
 }
