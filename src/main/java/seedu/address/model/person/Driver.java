@@ -67,6 +67,10 @@ public class Driver extends Person {
         this.schedule.add(eventTime);
     }
 
+    /**
+     * Returns true if both drivers of the same name have at least one other identity field that is the same.
+     * This defines a weaker notion of equality between two drivers.
+     */
     public boolean isSameDriver(Driver otherDriver) {
         if (otherDriver == this) {
             return true;

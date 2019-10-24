@@ -30,8 +30,8 @@ public class EditDriverCommandParser implements Parser<EditDriverCommand> {
      * @throws ParseException if the user input does not conform the expected format
      */
     public EditDriverCommand parse(String args) throws ParseException {
-            requireNonNull(args);
-            ArgumentMultimap argMultimap =
+        requireNonNull(args);
+        ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG);
 
         Index index;
@@ -39,7 +39,8 @@ public class EditDriverCommandParser implements Parser<EditDriverCommand> {
         try {
             index = ParserUtil.parseIndex(argMultimap.getPreamble());
         } catch (ParseException pe) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditDriverCommand.MESSAGE_USAGE), pe);
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditDriverCommand.MESSAGE_USAGE),
+                    pe);
         }
 
         EditDriverDescriptor editDriverDescriptor = new EditDriverDescriptor();

@@ -26,7 +26,10 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
 import seedu.address.model.tag.Tag;
 
-public class EditDriverCommand extends Command{
+/**
+ * Edits the details of an existing driver in the address book.
+ */
+public class EditDriverCommand extends Command {
     public static final String COMMAND_WORD = "editD";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Edits the details of the driver identified "

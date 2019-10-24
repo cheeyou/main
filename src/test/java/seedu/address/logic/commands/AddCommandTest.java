@@ -194,9 +194,34 @@ public class AddCommandTest {
         };
 
         @Override
+        public boolean hasCustomer(Customer customer) {
+            throw new AssertionError("This method should not be called.");
+        };
+
+        @Override
         public Customer getCustomer(int customerId) {
             throw new AssertionError("This method should not be called.");
         };
+
+        @Override
+        public void setCustomer(Customer customerToEdit, Customer editedCustomer) {
+            throw new AssertionError("This method should not be called.");
+        };
+
+        @Override
+        public void updateFilteredCustomerList(Predicate<Customer> predicate) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public ObservableList<Customer> getFilteredCustomerList() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public boolean hasDriver(Driver driver) {
+            throw new AssertionError("This method should not be called.");
+        }
 
         @Override
         public boolean hasDriver(int driverId) {
@@ -204,9 +229,24 @@ public class AddCommandTest {
         };
 
         @Override
+        public void setDriver(Driver driverToEdit, Driver editedDriver) {
+            throw new AssertionError("This method should not be called.");
+        };
+
+        @Override
         public Optional<Driver> getDriver(int driverId) {
             throw new AssertionError("This method should not be called.");
         };
+
+        @Override
+        public void updateFilteredDriverList(Predicate<Driver> predicate) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public ObservableList<Driver> getFilteredDriverList() {
+            throw new AssertionError("This method should not be called.");
+        }
 
     }
 

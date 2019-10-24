@@ -45,7 +45,7 @@ public class CustomerManager extends EntityManager<Customer> {
      * @param customer customer to be checked
      */
     public boolean hasCustomer(Customer customer) {
-        return super.hasPerson(customer);                       //is this okay? i mean its a person not a customer
+        return super.hasPerson(customer);
     }
 
     /**
