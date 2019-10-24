@@ -9,12 +9,10 @@ import static seedu.address.testutil.Assert.assertThrows;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
 import org.junit.jupiter.api.Test;
-
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
