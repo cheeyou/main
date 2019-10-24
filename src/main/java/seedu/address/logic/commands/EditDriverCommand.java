@@ -20,11 +20,9 @@ import seedu.address.commons.util.CollectionUtil;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Address;
-import seedu.address.model.person.Customer;
 import seedu.address.model.person.Driver;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
-import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.tag.Tag;
 
@@ -66,7 +64,7 @@ public class EditDriverCommand extends Command{
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
-        List<Driver> lastShownList = model.getFilteredDriverList();                                                  //may need to edit
+        List<Driver> lastShownList = model.getFilteredDriverList();
 
         if (index.getZeroBased() >= lastShownList.size()) {
             throw new CommandException(Messages.MESSAGE_INVALID_DRIVER_DISPLAYED_INDEX);
@@ -75,12 +73,12 @@ public class EditDriverCommand extends Command{
         Driver driverToEdit = lastShownList.get(index.getZeroBased());
         Driver editedDriver = createEditedDriver(driverToEdit, editDriverDescriptor);
 
-        if (!driverToEdit.isSameDriver(editedDriver) && model.hasDriver(editedDriver)) {                            //need create a hasCustomer in model
+        if (!driverToEdit.isSameDriver(editedDriver) && model.hasDriver(editedDriver)) {
             throw new CommandException(MESSAGE_DUPLICATE_DRIVER);
         }
 
-        model.setDriver(driverToEdit, editedDriver);                                                              //set customer in model
-        model.updateFilteredDriverList(PREDICATE_SHOW_ALL_DRIVERS);                                                 //implement in model as well
+        model.setDriver(driverToEdit, editedDriver);
+        model.updateFilteredDriverList(PREDICATE_SHOW_ALL_DRIVERS);
         return new CommandResult(String.format(MESSAGE_EDIT_DRIVER_SUCCESS, editedDriver));
     }
 
