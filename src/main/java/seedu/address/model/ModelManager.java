@@ -55,12 +55,12 @@ public class ModelManager implements Model {
         this.addressBook = new AddressBook(addressBook);
         this.userPrefs = new UserPrefs(userPrefs);
         filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
-        filteredCustomers = new FilteredList<Customer>(this.addressBook.getPersonList());
-        filteredDrivers = new FilteredList<Driver>(this.addressBook.getPersonList());
 
         this.taskManager = new TaskManager();
         this.customerManager = new CustomerManager();
+        filteredCustomers = new FilteredList<>(customerManager.getCustomerList());
         this.driverManager = new DriverManager();
+        filteredDrivers = new FilteredList<>(driverManager.getDriverList());
 
         // temp
         // to test the task commands

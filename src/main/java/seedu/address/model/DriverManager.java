@@ -2,6 +2,8 @@ package seedu.address.model;
 
 import java.util.Optional;
 
+import javafx.collections.ObservableList;
+
 import seedu.address.model.person.Driver;
 
 /**
@@ -51,5 +53,15 @@ public class DriverManager extends EntityManager<Driver> {
                 .stream()
                 .filter(driver -> driver.getId() == driverId)
                 .findFirst();
+    }
+
+    /**
+     * Returns an unmodifiable view of the driver list.
+     * This list will not contain any duplicate drivers.
+     *
+     * @return Driver list without duplicate drivers.
+     */
+    public ObservableList<Driver> getDriverList() {
+        return super.getPersonList();
     }
 }

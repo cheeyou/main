@@ -1,5 +1,7 @@
 package seedu.address.model.person;
 
+import javafx.collections.ObservableList;
+
 import seedu.address.model.EntityManager;
 import seedu.address.model.person.exceptions.PersonNotFoundException;
 
@@ -25,6 +27,16 @@ public class CustomerManager extends EntityManager<Customer> {
                 .filter(customer -> customer.getId() == customerId)
                 .findFirst()
                 .orElseThrow(PersonNotFoundException::new);
+    }
+
+    /**
+     * Returns an unmodifiable view of the customer list.
+     * This list will not contain any duplicate customers.
+     *
+     * @return Customer list without duplicate customers.
+     */
+    public ObservableList<Customer> getCustomerList() {
+        return super.getPersonList();
     }
 
     /**
