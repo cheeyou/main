@@ -21,7 +21,6 @@ public class Driver extends Person {
 
     //data fields
     private Schedule schedule;
-    public static final String MESSAGE_INVALID_ID = "Invalid driver ID.";
 
     /**
      * Every field must be present and not null.
@@ -95,7 +94,7 @@ public class Driver extends Person {
                 && otherDriver.getAddress().equals(getAddress())
                 && otherDriver.getTags().equals(getTags());
     }
-  
+
     /**
      * Returns a string representation of the driver, with identity fields visible to the user.
      *
