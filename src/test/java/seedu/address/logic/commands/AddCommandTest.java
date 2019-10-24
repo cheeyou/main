@@ -12,9 +12,9 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import javafx.collections.ObservableList;
 import org.junit.jupiter.api.Test;
 
-import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
@@ -189,12 +189,12 @@ public class AddCommandTest {
         };
 
         @Override
-        public boolean hasCustomer(int customerId) {
+        public boolean hasCustomer(Customer customer) {
             throw new AssertionError("This method should not be called.");
-        };
+        }
 
         @Override
-        public boolean hasCustomer(Customer customer) {
+        public boolean hasCustomer(int customerId) {
             throw new AssertionError("This method should not be called.");
         };
 
@@ -205,10 +205,14 @@ public class AddCommandTest {
 
         @Override
         public void setCustomer(Customer customerToEdit, Customer editedCustomer) {
+
+        }
+
+        @Override
+        public void addCustomer(Customer customer) {
             throw new AssertionError("This method should not be called.");
         };
 
-        @Override
         public void updateFilteredCustomerList(Predicate<Customer> predicate) {
             throw new AssertionError("This method should not be called.");
         }
@@ -217,6 +221,10 @@ public class AddCommandTest {
         public ObservableList<Customer> getFilteredCustomerList() {
             throw new AssertionError("This method should not be called.");
         }
+
+        public void deleteCustomer(Customer customer) {
+            throw new AssertionError("This method should not be called.");
+        };
 
         @Override
         public boolean hasDriver(Driver driver) {
@@ -236,9 +244,12 @@ public class AddCommandTest {
         @Override
         public Optional<Driver> getDriver(int driverId) {
             throw new AssertionError("This method should not be called.");
+        }
+        @Override
+        public void addDriver(Driver driver) {
+            throw new AssertionError("This method should not be called.");
         };
 
-        @Override
         public void updateFilteredDriverList(Predicate<Driver> predicate) {
             throw new AssertionError("This method should not be called.");
         }
@@ -248,6 +259,9 @@ public class AddCommandTest {
             throw new AssertionError("This method should not be called.");
         }
 
+        public void deleteDriver(Driver driver) {
+            throw new AssertionError("This method should not be called.");
+        };
     }
 
     /**

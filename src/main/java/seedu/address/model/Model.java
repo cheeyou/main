@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
+
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.model.legacy.ReadOnlyAddressBook;
 import seedu.address.model.person.Customer;
@@ -132,6 +133,10 @@ public interface Model {
 
     ObservableList<Customer> getFilteredCustomerList();
 
+    void addCustomer(Customer customer);
+
+    void deleteCustomer(Customer customer);
+
     // driver manager
 
     boolean hasDriver(Driver driver);
@@ -145,4 +150,8 @@ public interface Model {
     void updateFilteredDriverList(Predicate<Driver> predicate);
 
     ObservableList<Driver> getFilteredDriverList();
+
+    void addDriver(Driver driver);
+
+    void deleteDriver(Driver driver);
 }

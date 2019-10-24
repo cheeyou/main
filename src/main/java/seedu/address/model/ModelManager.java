@@ -11,13 +11,13 @@ import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.legacy.AddressBook;
 import seedu.address.model.legacy.ReadOnlyAddressBook;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Customer;
-import seedu.address.model.person.CustomerManager;
 import seedu.address.model.person.Driver;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
@@ -176,9 +176,8 @@ public class ModelManager implements Model {
     }
 
     // =========== Customer Manager ===========================================================================
-
     public boolean hasCustomer(Customer customer) {
-        return customerManager.hasCustomer(customer);
+        return customerManager.hasPerson(customer);
     }
 
     public boolean hasCustomer(int customerId) {
@@ -193,15 +192,22 @@ public class ModelManager implements Model {
         return customerManager.getCustomer(customerId);
     }
 
-    // =========== Driver Manager ===========================================================================
+    public void addCustomer(Customer customer) {
+        customerManager.addPerson(customer);
+    }
 
+    public void deleteCustomer(Customer customer) {
+        customerManager.removePerson(customer);
+    }
+
+    // =========== Driver Manager ===========================================================================
     public boolean hasDriver(Driver driver) {
         return driverManager.hasDriver(driver);
     }
 
     public boolean hasDriver(int driverId) {
         return driverManager.hasDriver(driverId);
-    }
+    };
 
     public void setDriver(Driver driverToEdit, Driver editedDriver) {
         driverManager.setDriver(driverToEdit, editedDriver);
@@ -209,6 +215,14 @@ public class ModelManager implements Model {
 
     public Optional<Driver> getDriver(int driverId) {
         return driverManager.getDriver(driverId);
+    }
+
+    public void addDriver(Driver driver) {
+        driverManager.addDriver(driver);
+    }
+
+    public void deleteDriver(Driver driver) {
+        driverManager.deleteDriver(driver);
     }
 
     // =========== Filtered Person List Accessors =============================================================
