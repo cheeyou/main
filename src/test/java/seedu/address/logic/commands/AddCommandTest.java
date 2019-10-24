@@ -242,7 +242,7 @@ public class AddCommandTest {
         };
 
         @Override
-        public Optional<Driver> getDriver(int driverId) {
+        public Driver getDriver(int driverId) {
             throw new AssertionError("This method should not be called.");
         }
         @Override
