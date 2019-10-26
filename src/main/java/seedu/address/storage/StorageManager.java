@@ -7,9 +7,11 @@ import java.util.logging.Logger;
 
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.exceptions.DataConversionException;
-import seedu.address.model.ReadOnlyAddressBook;
+import seedu.address.model.CustomerManager;
 import seedu.address.model.ReadOnlyUserPrefs;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.legacy.ReadOnlyAddressBook;
+import seedu.address.model.task.TaskManager;
 
 /**
  * Manages storage of AddressBook data in local storage.
@@ -19,7 +21,6 @@ public class StorageManager implements Storage {
     private static final Logger logger = LogsCenter.getLogger(StorageManager.class);
     private AddressBookStorage addressBookStorage;
     private UserPrefsStorage userPrefsStorage;
-
 
     public StorageManager(AddressBookStorage addressBookStorage, UserPrefsStorage userPrefsStorage) {
         super();
@@ -43,7 +44,6 @@ public class StorageManager implements Storage {
     public void saveUserPrefs(ReadOnlyUserPrefs userPrefs) throws IOException {
         userPrefsStorage.saveUserPrefs(userPrefs);
     }
-
 
     // ================ AddressBook methods ==============================
 
@@ -72,6 +72,21 @@ public class StorageManager implements Storage {
     public void saveAddressBook(ReadOnlyAddressBook addressBook, Path filePath) throws IOException {
         logger.fine("Attempting to write to data file: " + filePath);
         addressBookStorage.saveAddressBook(addressBook, filePath);
+    }
+
+    // Includes saving task manager & customer manager
+    @Override
+    public void saveAddressBook(ReadOnlyAddressBook addressBook, TaskManager taskManager,
+                                CustomerManager customerManager) throws IOException {
+        saveAddressBook(addressBook, taskManager, customerManager, addressBookStorage.getAddressBookFilePath());
+    }
+
+    @Override
+    public void saveAddressBook(ReadOnlyAddressBook addressBook, TaskManager taskManager,
+                                CustomerManager customerManager, Path filePath)
+            throws IOException {
+        logger.fine("Attempting to write to data file: " + filePath);
+        addressBookStorage.saveAddressBook(addressBook, taskManager, customerManager, filePath);
     }
 
 }

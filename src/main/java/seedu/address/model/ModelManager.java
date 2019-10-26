@@ -4,14 +4,27 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.model.legacy.AddressBook;
+import seedu.address.model.legacy.ReadOnlyAddressBook;
+import seedu.address.model.person.Address;
+import seedu.address.model.person.Customer;
+import seedu.address.model.person.Driver;
+import seedu.address.model.person.Email;
+import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.Phone;
+import seedu.address.model.tag.Tag;
+import seedu.address.model.task.Task;
+import seedu.address.model.task.TaskManager;
 
 /**
  * Represents the in-memory model of the address book data.
@@ -22,6 +35,12 @@ public class ModelManager implements Model {
     private final AddressBook addressBook;
     private final UserPrefs userPrefs;
     private final FilteredList<Person> filteredPersons;
+    private final FilteredList<Customer> filteredCustomers;
+    private final FilteredList<Driver> filteredDrivers;
+
+    private final TaskManager taskManager;
+    private final CustomerManager customerManager;
+    private final DriverManager driverManager;
 
     /**
      * Initializes a ModelManager with the given addressBook and userPrefs.
@@ -35,23 +54,35 @@ public class ModelManager implements Model {
         this.addressBook = new AddressBook(addressBook);
         this.userPrefs = new UserPrefs(userPrefs);
         filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
+
+        this.taskManager = new TaskManager();
+        this.customerManager = new CustomerManager();
+        filteredCustomers = new FilteredList<>(customerManager.getCustomerList());
+        this.driverManager = new DriverManager();
+        filteredDrivers = new FilteredList<>(driverManager.getDriverList());
+
+        // temp
+        // to test the task commands
+        Customer testCustomer = new Customer(new Name("Alesx Yeoh"), new Phone("87438807"),
+                new Email("alexyeoh@example.com"), new Address("Blk 30 Geylang Street 29, #06-40"), new HashSet<Tag>());
+        customerManager.addPerson(testCustomer);
     }
 
     public ModelManager() {
         this(new AddressBook(), new UserPrefs());
     }
 
-    //=========== UserPrefs ==================================================================================
+    // =========== UserPrefs ==================================================================================
+
+    @Override
+    public ReadOnlyUserPrefs getUserPrefs() {
+        return userPrefs;
+    }
 
     @Override
     public void setUserPrefs(ReadOnlyUserPrefs userPrefs) {
         requireNonNull(userPrefs);
         this.userPrefs.resetData(userPrefs);
-    }
-
-    @Override
-    public ReadOnlyUserPrefs getUserPrefs() {
-        return userPrefs;
     }
 
     @Override
@@ -76,17 +107,18 @@ public class ModelManager implements Model {
         userPrefs.setAddressBookFilePath(addressBookFilePath);
     }
 
-    //=========== AddressBook ================================================================================
+    // =========== AddressBook ================================================================================
+
+    @Override
+    public ReadOnlyAddressBook getAddressBook() {
+        return addressBook;
+    }
 
     @Override
     public void setAddressBook(ReadOnlyAddressBook addressBook) {
         this.addressBook.resetData(addressBook);
     }
 
-    @Override
-    public ReadOnlyAddressBook getAddressBook() {
-        return addressBook;
-    }
 
     @Override
     public boolean hasPerson(Person person) {
@@ -112,11 +144,91 @@ public class ModelManager implements Model {
         addressBook.setPerson(target, editedPerson);
     }
 
-    //=========== Filtered Person List Accessors =============================================================
+    // =========== Task Manager ===============================================================================
+
+    public void addTask(Task task) {
+        taskManager.addTask(task);
+    }
+
+    public void deleteTask(Task task) {
+        taskManager.deleteTask(task);
+    }
+
+    public boolean hasTask(Task task) {
+        return taskManager.hasTask(task);
+    }
+
+    public boolean hasTask(int taskId) {
+        return taskManager.hasTask(taskId);
+    }
+
+    public void setTask(Task taskToEdit, Task editedTask) {
+        taskManager.setTask(taskToEdit, editedTask);
+    }
+
+    public TaskManager getTaskManager() {
+        return taskManager;
+    }
+
+    public Task getTask(int taskId) {
+        return taskManager.getTask(taskId);
+    }
+
+    // =========== Customer Manager ===========================================================================
+    public boolean hasCustomer(Customer customer) {
+        return customerManager.hasPerson(customer);
+    }
+
+    public boolean hasCustomer(int customerId) {
+        return customerManager.hasCustomer(customerId);
+    }
+
+    public void setCustomer(Customer customerToEdit, Customer editedCustomer) {
+        customerManager.setCustomer(customerToEdit, editedCustomer);
+    }
+
+    public Customer getCustomer(int customerId) {
+        return customerManager.getCustomer(customerId);
+    }
+
+    public void addCustomer(Customer customer) {
+        customerManager.addPerson(customer);
+    }
+
+    public void deleteCustomer(Customer customer) {
+        customerManager.removePerson(customer);
+    }
+
+    // =========== Driver Manager ===========================================================================
+    public boolean hasDriver(Driver driver) {
+        return driverManager.hasDriver(driver);
+    }
+
+    public boolean hasDriver(int driverId) {
+        return driverManager.hasDriver(driverId);
+    };
+
+    public void setDriver(Driver driverToEdit, Driver editedDriver) {
+        driverManager.setDriver(driverToEdit, editedDriver);
+    }
+
+    public Driver getDriver(int driverId) {
+        return driverManager.getDriver(driverId);
+    }
+
+    public void addDriver(Driver driver) {
+        driverManager.addDriver(driver);
+    }
+
+    public void deleteDriver(Driver driver) {
+        driverManager.deleteDriver(driver);
+    }
+
+    // =========== Filtered Person List Accessors =============================================================
 
     /**
-     * Returns an unmodifiable view of the list of {@code Person} backed by the internal list of
-     * {@code versionedAddressBook}
+     * Returns an unmodifiable view of the list of {@code Person} backed by the
+     * internal list of {@code versionedAddressBook}
      */
     @Override
     public ObservableList<Person> getFilteredPersonList() {
@@ -124,9 +236,31 @@ public class ModelManager implements Model {
     }
 
     @Override
+    public ObservableList<Customer> getFilteredCustomerList() {
+        return filteredCustomers;
+    }
+
+    @Override
+    public ObservableList<Driver> getFilteredDriverList() {
+        return filteredDrivers;
+    }
+
+    @Override
     public void updateFilteredPersonList(Predicate<Person> predicate) {
         requireNonNull(predicate);
         filteredPersons.setPredicate(predicate);
+    }
+
+    @Override
+    public void updateFilteredCustomerList(Predicate<Customer> predicate) {
+        requireNonNull(predicate);
+        filteredCustomers.setPredicate(predicate);
+    }
+
+    @Override
+    public void updateFilteredDriverList(Predicate<Driver> predicate) {
+        requireNonNull(predicate);
+        filteredDrivers.setPredicate(predicate);
     }
 
     @Override
@@ -143,8 +277,7 @@ public class ModelManager implements Model {
 
         // state check
         ModelManager other = (ModelManager) obj;
-        return addressBook.equals(other.addressBook)
-                && userPrefs.equals(other.userPrefs)
+        return addressBook.equals(other.addressBook) && userPrefs.equals(other.userPrefs)
                 && filteredPersons.equals(other.filteredPersons);
     }
 

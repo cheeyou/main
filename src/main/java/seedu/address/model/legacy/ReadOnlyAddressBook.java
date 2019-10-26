@@ -1,11 +1,14 @@
-package seedu.address.model;
+package seedu.address.model.legacy;
 
 import javafx.collections.ObservableList;
 import seedu.address.model.person.Person;
 
 /**
  * Unmodifiable view of an address book
+ *
+ * @deprecated use the generic {@code ReadOnlyEntityManager} instead
  */
+@Deprecated
 public interface ReadOnlyAddressBook {
 
     /**
