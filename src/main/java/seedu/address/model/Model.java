@@ -122,6 +122,10 @@ public interface Model {
 
     boolean hasTaskBelongsToCustomer(Customer customer);
 
+    void updateFilteredTaskList(Predicate<Task> predicate);
+
+    ObservableList<Task> getFilteredTaskList();
+
     // customer manager
 
     boolean hasCustomer(Customer customer);

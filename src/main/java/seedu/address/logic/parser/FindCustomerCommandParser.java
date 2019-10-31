@@ -7,7 +7,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.CustomerNameContainsStringPredicate;
 
 /**
- * Parses input arguments and creates a new FindCommand object
+ * Parses input arguments and creates a new FindTaskCommand object
  */
 public class FindCustomerCommandParser implements Parser<FindCustomerCommand> {
 
@@ -25,5 +25,4 @@ public class FindCustomerCommandParser implements Parser<FindCustomerCommand> {
 
         return new FindCustomerCommand(new CustomerNameContainsStringPredicate(trimmedArgs));
     }
-
 }

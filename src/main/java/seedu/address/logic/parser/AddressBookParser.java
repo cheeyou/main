@@ -84,6 +84,12 @@ public class AddressBookParser {
         case FindDriverCommand.COMMAND_WORD:
             return new FindDriverCommandParser().parse(arguments);
 
+        case FindTaskCommand.COMMAND_WORD:
+            return new FindTaskCommandParser().parse(arguments);
+
+        case DisplayDriverTasksCommand.COMMAND_WORD:
+            return new DisplayDriverTasksCommandParser().parse(arguments);
+
         case ListCommand.COMMAND_WORD:
             return new ListCommand();
 

@@ -7,7 +7,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.DriverNameContainsStringPredicate;
 
 /**
- * Parses input arguments and creates a new FindCommand object
+ * Parses input arguments and creates a new FindTaskCommand object
  */
 public class FindDriverCommandParser implements Parser<FindDriverCommand> {
 

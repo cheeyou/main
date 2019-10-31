@@ -38,15 +38,15 @@ public class Driver extends Person {
         return id;
     }
 
+    public void assign(EventTime eventTime) throws SchedulingException {
+        this.schedule.add(eventTime);
+    }
+
     /**
      * {@see Schedule#remove}
      */
     public boolean deleteFromSchedule(EventTime durationToRemove) {
         return schedule.remove(durationToRemove);
-    }
-
-    public void addToSchedule(EventTime durationToAdd) throws SchedulingException {
-        schedule.add(durationToAdd);
     }
 
     public boolean isScheduleAvailable(EventTime durationToAdd) {
@@ -55,10 +55,6 @@ public class Driver extends Person {
 
     public String suggestTime(EventTime eventTime) {
         return this.schedule.getSchedulingSuggestion(eventTime);
-    }
-
-    public void assign(EventTime eventTime) throws SchedulingException {
-        this.schedule.add(eventTime);
     }
 
     /**

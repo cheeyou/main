@@ -7,17 +7,17 @@ import seedu.address.model.Model;
 import seedu.address.model.person.CustomerNameContainsStringPredicate;
 
 /**
- * Finds and lists all persons in address book whose name contains any of the argument keywords.
+ * Finds and lists all customers in address book whose name contains the phrase.
  * Keyword matching is case insensitive.
  */
 public class FindCustomerCommand extends Command {
 
     public static final String COMMAND_WORD = "findC";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all customers whose names contain any of "
-            + "the specified keywords (case-insensitive) and displays them as a list with index numbers.\n"
-            + "Parameters: KEYWORD [MORE_KEYWORDS]...\n"
-            + "Example: " + COMMAND_WORD + " alice bob charlie";
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all customers whose names contain "
+            + "the phrase (case-insensitive) and displays them as a list with index numbers.\n"
+            + "Parameters: PHRASE [MORE PHRASE]...\n"
+            + "Example: " + COMMAND_WORD + " alex ch";
 
     private final CustomerNameContainsStringPredicate predicate;
 

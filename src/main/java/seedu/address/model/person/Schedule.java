@@ -39,7 +39,6 @@ public class Schedule {
         schedule.add(afterWorkingHours);
     }
 
-
     public String getSchedulingSuggestion(EventTime eventTime) {
         String suggested = findFirstAvailableSlot(eventTime)
                 .map(x -> String.format(MESSAGE_SUGGEST_TIME_FORMAT, x.toString()))

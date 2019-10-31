@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 
+import seedu.address.model.person.Driver;
+
 /**
  * Helper functions for handling strings.
  */
@@ -59,6 +61,14 @@ public class StringUtil {
         checkArgument(!preppedPhrase.isEmpty(), "Phrase parameter cannot be empty");
 
         return sentence.toLowerCase().contains(preppedPhrase);
+    }
+
+    /**
+     * Returns true if the (@code driverToCompare) is equal to (@code driverAssignedToTask).
+     *
+     */
+    public static boolean isTheSameDriver(Driver driverToCompare, Driver driverAssignedToTask) {
+        return driverToCompare.equals(driverAssignedToTask);
     }
 
     /**

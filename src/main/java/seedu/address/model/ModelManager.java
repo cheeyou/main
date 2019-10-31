@@ -38,6 +38,7 @@ public class ModelManager implements Model {
     private final FilteredList<Person> filteredPersons;
     private final FilteredList<Customer> filteredCustomers;
     private final FilteredList<Driver> filteredDrivers;
+    private final FilteredList<Task> filteredTasks;
 
     private final TaskManager taskManager;
     private final CustomerManager customerManager;
@@ -57,6 +58,7 @@ public class ModelManager implements Model {
         filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
 
         this.taskManager = new TaskManager();
+        filteredTasks = new FilteredList<>(taskManager.getList());
         this.customerManager = new CustomerManager();
         filteredCustomers = new FilteredList<>(customerManager.getCustomerList());
         this.driverManager = new DriverManager();
@@ -284,6 +286,11 @@ public class ModelManager implements Model {
     }
 
     @Override
+    public ObservableList<Task> getFilteredTaskList() {
+        return filteredTasks;
+    }
+
+    @Override
     public void updateFilteredPersonList(Predicate<Person> predicate) {
         requireNonNull(predicate);
         filteredPersons.setPredicate(predicate);
@@ -299,6 +306,12 @@ public class ModelManager implements Model {
     public void updateFilteredDriverList(Predicate<Driver> predicate) {
         requireNonNull(predicate);
         filteredDrivers.setPredicate(predicate);
+    }
+
+    @Override
+    public void updateFilteredTaskList(Predicate<Task> predicate) {
+        requireNonNull(predicate);
+        filteredTasks.setPredicate(predicate);
     }
 
     @Override
