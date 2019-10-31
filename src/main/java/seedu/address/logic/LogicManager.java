@@ -14,7 +14,11 @@ import seedu.address.logic.parser.AddressBookParser;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.legacy.ReadOnlyAddressBook;
+import seedu.address.model.person.Customer;
+import seedu.address.model.person.Driver;
 import seedu.address.model.person.Person;
+import seedu.address.model.task.Task;
+import seedu.address.storage.CentralManager;
 import seedu.address.storage.Storage;
 
 /**
@@ -43,11 +47,8 @@ public class LogicManager implements Logic {
         commandResult = command.execute(model);
 
         try {
-            //temp
-            //uncomment to save tasks.json
-            //storage.saveAddressBook(model.getAddressBook(), model.getTaskManager());
-            //hax to pass 1 test case
-            storage.saveAddressBook(model.getAddressBook());
+            storage.saveManager(new CentralManager(model.getCustomerManager(), model.getDriverManager(),
+                    model.getTaskManager(), model.getIdManager()));
         } catch (IOException ioe) {
             throw new CommandException(FILE_OPS_ERROR_MESSAGE + ioe, ioe);
         }
@@ -63,6 +64,31 @@ public class LogicManager implements Logic {
     @Override
     public ObservableList<Person> getFilteredPersonList() {
         return model.getFilteredPersonList();
+    }
+
+    @Override
+    public ObservableList<Task> getFilteredTaskList() {
+        return model.getFilteredTaskList();
+    }
+
+    @Override
+    public ObservableList<Task> getFilteredUnassignedTaskList() {
+        return model.getUnassignedTaskList();
+    }
+
+    @Override
+    public ObservableList<Task> getFilteredAssignedTaskList() {
+        return model.getAssignedTaskList();
+    }
+
+    @Override
+    public ObservableList<Driver> getFilteredDriverList() {
+        return model.getFilteredDriverList();
+    }
+
+    @Override
+    public ObservableList<Customer> getFilteredCustomerList() {
+        return model.getFilteredCustomerList();
     }
 
     @Override

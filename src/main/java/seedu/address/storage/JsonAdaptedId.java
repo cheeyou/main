@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.id.IdManager;
-import seedu.address.model.task.Task;
 
 /**
  * Jackson-friendly version of {@link IdManager}.
@@ -45,12 +44,12 @@ public class JsonAdaptedId {
      *
      * @throws IllegalValueException if there were any data constraints violated in the adapted task.
      */
-    public void toModelType() throws IllegalValueException {
+    public IdManager toModelType() throws IllegalValueException {
         if (lastTaskId == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, "lastTaskId"));
         }
 
-        if (!Task.isValidId(lastTaskId)) {
+        if (!IdManager.isValidId(lastTaskId)) {
             throw new IllegalValueException(String.format(INVALID_INTEGER_ID, "lastTaskId"));
         }
         final int modelLastTaskId = Integer.parseInt(lastTaskId);
@@ -59,7 +58,7 @@ public class JsonAdaptedId {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, "lastCustomerId"));
         }
 
-        if (!Task.isValidId(lastCustomerId)) {
+        if (!IdManager.isValidId(lastCustomerId)) {
             throw new IllegalValueException(String.format(INVALID_INTEGER_ID, "lastCustomerId"));
         }
         final int modelLastCustomerId = Integer.parseInt(lastCustomerId);
@@ -68,13 +67,11 @@ public class JsonAdaptedId {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, "lastDriverId"));
         }
 
-        if (!Task.isValidId(lastDriverId)) {
+        if (!IdManager.isValidId(lastDriverId)) {
             throw new IllegalValueException(String.format(INVALID_INTEGER_ID, "lastDriverId"));
         }
         final int modelLastDriverId = Integer.parseInt(lastDriverId);
 
-        IdManager.setLastTaskId(modelLastTaskId);
-        IdManager.setLastCustomerId(modelLastCustomerId);
-        IdManager.setLastDriverId(modelLastDriverId);
+        return new IdManager(modelLastTaskId, modelLastCustomerId, modelLastDriverId);
     }
 }

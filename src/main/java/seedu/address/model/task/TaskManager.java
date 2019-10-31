@@ -19,10 +19,6 @@ public class TaskManager {
         tasks = savedTasks;
     }
 
-    public void setTaskList(TaskList savedTasks) {
-        tasks.setTaskList(savedTasks.getList());
-    }
-
     public ObservableList<Task> getList() {
         return tasks.getList();
     }
@@ -51,5 +47,23 @@ public class TaskManager {
 
     public boolean hasTask(int taskId) {
         return tasks.hasTask(taskId);
+    }
+
+    public void setTaskList(TaskList taskList) {
+        tasks.setTaskList(taskList.getList());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        TaskManager otherObject = (TaskManager) o;
+        return getList().equals(otherObject.getList());
     }
 }

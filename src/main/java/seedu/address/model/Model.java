@@ -5,13 +5,16 @@ import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
 
+import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
+import seedu.address.model.id.IdManager;
 import seedu.address.model.legacy.ReadOnlyAddressBook;
 import seedu.address.model.person.Customer;
 import seedu.address.model.person.Driver;
 import seedu.address.model.person.Person;
 import seedu.address.model.task.Task;
 import seedu.address.model.task.TaskManager;
+import seedu.address.model.task.TaskStatus;
 
 /**
  * The API of the Model component.
@@ -23,6 +26,16 @@ public interface Model {
     Predicate<Person> PREDICATE_SHOW_ALL_PERSONS = unused -> true;
     Predicate<Customer> PREDICATE_SHOW_ALL_CUSTOMERS = unused -> true;
     Predicate<Driver> PREDICATE_SHOW_ALL_DRIVERS = unused -> true;
+
+    /**
+     * {@code Predicate} that filters the task to incomplete status
+     */
+    Predicate<Task> PREDICATE_SHOW_UNASSIGNED = task -> task.getStatus().equals(TaskStatus.INCOMPLETE);
+
+    /**
+     * {@code Predicate} that filters the task to on-going status
+     */
+    Predicate<Task> PREDICATE_SHOW_ASSIGNED = task -> task.getStatus().equals(TaskStatus.ON_GOING);
 
     /**
      * Returns the user prefs.
@@ -102,6 +115,10 @@ public interface Model {
      */
     void updateFilteredPersonList(Predicate<Person> predicate);
 
+    // central manager
+
+    void resetCentralManager();
+
     // task manager
 
     void addTask(Task task);
@@ -124,9 +141,19 @@ public interface Model {
 
     void updateFilteredTaskList(Predicate<Task> predicate);
 
-    ObservableList<Task> getFilteredTaskList();
+    /**
+     * Returns an unmodifiable view of the filtered unassigned task list.
+     */
+    ObservableList<Task> getUnassignedTaskList();
+
+    /**
+     * Returns an unmodifiable view of the filtered assigned task list.
+     */
+    ObservableList<Task> getAssignedTaskList();
 
     // customer manager
+
+    CustomerManager getCustomerManager();
 
     boolean hasCustomer(Customer customer);
 
@@ -134,17 +161,17 @@ public interface Model {
 
     Customer getCustomer(int customerId);
 
+    void viewDriverTask(Person driverToView);
+
     void setCustomer(Customer customerToEdit, Customer editedTask);
-
-    void updateFilteredCustomerList(Predicate<Customer> predicate);
-
-    ObservableList<Customer> getFilteredCustomerList();
 
     void addCustomer(Customer customer);
 
     void deleteCustomer(Customer customer);
 
     // driver manager
+
+    DriverManager getDriverManager();
 
     boolean hasDriver(Driver driver);
 
@@ -156,9 +183,47 @@ public interface Model {
 
     void updateFilteredDriverList(Predicate<Driver> predicate);
 
-    ObservableList<Driver> getFilteredDriverList();
-
     void addDriver(Driver driver);
 
     void deleteDriver(Driver driver);
+
+    /**
+     * Returns an unmodifiable view of the filtered task list.
+     */
+
+    ObservableList<Task> getFilteredTaskList();
+
+    /**
+     * Updates the filter of the filtered task list to filter by the given
+     * {@code predicate}.
+     *
+     * @throws NullPointerException if {@code predicate} is null.
+     */
+    void updateFilteredTaskList(Predicate<Task> predicate, FilteredList<Task> list);
+
+    /**
+     * Returns an unmodifiable view of the filtered customer list.
+     */
+    ObservableList<Customer> getFilteredCustomerList();
+
+    /**
+     * Updates the filter of the filtered customer list to filter by the given
+     * {@code predicate}.
+     *
+     * @throws NullPointerException if {@code predicate} is null.
+     */
+    void updateFilteredCustomerList(Predicate<Customer> predicate);
+
+    /**
+     * Returns an unmodifiable view of the filtered driver list.
+     */
+    ObservableList<Driver> getFilteredDriverList();
+
+    int getNextTaskId();
+
+    int getNextCustomerId();
+
+    int getNextDriverId();
+
+    IdManager getIdManager();
 }

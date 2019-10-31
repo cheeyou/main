@@ -58,9 +58,10 @@ public class TaskList {
      * Check if task exists in the task list.
      */
     public boolean hasTask(Task task) {
+        requireNonNull(task);
         Optional<Task> foundTask = tasks
                                     .stream()
-                                    .filter(currentTask -> currentTask == task)
+                                    .filter(currentTask -> currentTask.equals(task))
                                     .findFirst();
         return foundTask.isPresent();
     }
@@ -132,17 +133,6 @@ public class TaskList {
 
     @Override
     public String toString() {
-        StringBuilder strToPrint = new StringBuilder();
-        for (int i = 0; i < getSize(); i++) {
-            Task task = getTask(i);
-            if (i == getSize() - 1) {
-                //if this is the last task
-                strToPrint.append(task);
-            }
-
-            strToPrint.append(task).append("\n");
-        }
-
-        return strToPrint.toString();
+        return getList().size() + " tasks";
     }
 }

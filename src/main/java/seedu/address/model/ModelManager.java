@@ -4,28 +4,23 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.id.IdManager;
 import seedu.address.model.legacy.AddressBook;
 import seedu.address.model.legacy.ReadOnlyAddressBook;
-import seedu.address.model.person.Address;
 import seedu.address.model.person.Customer;
 import seedu.address.model.person.Driver;
-import seedu.address.model.person.Email;
-import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
-import seedu.address.model.person.Phone;
-import seedu.address.model.tag.Tag;
 import seedu.address.model.task.Task;
+import seedu.address.model.task.TaskList;
 import seedu.address.model.task.TaskManager;
+import seedu.address.storage.CentralManager;
 
 /**
  * Represents the in-memory model of the address book data.
@@ -36,13 +31,16 @@ public class ModelManager implements Model {
     private final AddressBook addressBook;
     private final UserPrefs userPrefs;
     private final FilteredList<Person> filteredPersons;
+    private final FilteredList<Task> filteredTasks;
+    private final FilteredList<Task> unassignedTasks;
+
     private final FilteredList<Customer> filteredCustomers;
     private final FilteredList<Driver> filteredDrivers;
-    private final FilteredList<Task> filteredTasks;
 
     private final TaskManager taskManager;
     private final CustomerManager customerManager;
     private final DriverManager driverManager;
+    private final IdManager idManager;
 
     /**
      * Initializes a ModelManager with the given addressBook and userPrefs.
@@ -55,20 +53,39 @@ public class ModelManager implements Model {
 
         this.addressBook = new AddressBook(addressBook);
         this.userPrefs = new UserPrefs(userPrefs);
-        filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
-
         this.taskManager = new TaskManager();
-        filteredTasks = new FilteredList<>(taskManager.getList());
         this.customerManager = new CustomerManager();
-        filteredCustomers = new FilteredList<>(customerManager.getCustomerList());
         this.driverManager = new DriverManager();
-        filteredDrivers = new FilteredList<>(driverManager.getDriverList());
+        this.idManager = new IdManager();
 
-        // temp
-        // to test the task commands
-        Customer testCustomer = new Customer(1, new Name("Alesx Yeoh"), new Phone("87438807"),
-                new Email("alexyeoh@example.com"), new Address("Blk 30 Geylang Street 29, #06-40"), new HashSet<Tag>());
-        customerManager.addPerson(testCustomer);
+        filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
+        filteredTasks = new FilteredList<>(this.taskManager.getList());
+        unassignedTasks = new FilteredList<>(this.taskManager.getList());
+        filteredCustomers = new FilteredList<>(this.customerManager.getCustomerList());
+        filteredDrivers = new FilteredList<>(this.driverManager.getDriverList());
+    }
+
+    public ModelManager(CentralManager centralManager, ReadOnlyUserPrefs userPrefs) {
+        requireAllNonNull(centralManager, userPrefs);
+
+        logger.fine("Initializing with central manager: " + centralManager + " and user prefs " + userPrefs);
+
+        //temp
+        //to pass addressbook test case
+        this.addressBook = new AddressBook();
+        filteredPersons = new FilteredList<>(addressBook.getPersonList());
+
+        this.userPrefs = new UserPrefs(userPrefs);
+
+        this.customerManager = centralManager.getCustomerManager();
+        this.driverManager = centralManager.getDriverManager();
+        this.taskManager = centralManager.getTaskManager();
+        this.idManager = centralManager.getIdManager();
+
+        filteredCustomers = new FilteredList<>(customerManager.getCustomerList());
+        filteredDrivers = new FilteredList<>(driverManager.getDriverList());
+        filteredTasks = new FilteredList<>(taskManager.getList());
+        unassignedTasks = new FilteredList<>(taskManager.getList());
     }
 
     public ModelManager() {
@@ -147,6 +164,18 @@ public class ModelManager implements Model {
         addressBook.setPerson(target, editedPerson);
     }
 
+    // =========== CentralManager ============================================================================
+
+    /**
+     * Resets the {@link CentralManager} to a empty state. All data will be removed.
+     */
+    public void resetCentralManager() {
+        this.taskManager.setTaskList(new TaskList());
+        this.customerManager.setPersons(new CustomerManager().getPersonList());
+        this.driverManager.setPersons(new DriverManager().getPersonList());
+        this.idManager.resetIdManager();
+    }
+
     // =========== Task Manager ===============================================================================
 
     /**
@@ -154,7 +183,7 @@ public class ModelManager implements Model {
      */
     public void addTask(Task task) {
         taskManager.addTask(task);
-        IdManager.lastTaskIdPlusOne();
+        idManager.lastTaskIdPlusOne();
     }
 
     public void deleteTask(Task task) {
@@ -206,6 +235,10 @@ public class ModelManager implements Model {
     }
 
     // =========== Customer Manager ===========================================================================
+    public CustomerManager getCustomerManager() {
+        return customerManager;
+    }
+
     public boolean hasCustomer(Customer customer) {
         return customerManager.hasPerson(customer);
     }
@@ -228,7 +261,7 @@ public class ModelManager implements Model {
      */
     public void addCustomer(Customer customer) {
         customerManager.addPerson(customer);
-        IdManager.lastCustomerIdPlusOne();
+        idManager.lastCustomerIdPlusOne();
     }
 
     public void deleteCustomer(Customer customer) {
@@ -236,8 +269,12 @@ public class ModelManager implements Model {
     }
 
     // =========== Driver Manager ===========================================================================
+    public DriverManager getDriverManager() {
+        return driverManager;
+    }
+
     public boolean hasDriver(Driver driver) {
-        return driverManager.hasDriver(driver);
+        return driverManager.hasPerson(driver);
     }
 
     public boolean hasDriver(int driverId) {
@@ -245,7 +282,11 @@ public class ModelManager implements Model {
     }
 
     public void setDriver(Driver driverToEdit, Driver editedDriver) {
-        driverManager.setDriver(driverToEdit, editedDriver);
+        driverManager.setPerson(driverToEdit, editedDriver);
+    }
+    @Override
+    public void viewDriverTask(Person driverToView) {
+
     }
 
     public Driver getDriver(int driverId) {
@@ -256,12 +297,30 @@ public class ModelManager implements Model {
      * Adds Driver into driver list. Records the last unique driver id created in {@link IdManager}.
      */
     public void addDriver(Driver driver) {
-        driverManager.addDriver(driver);
-        IdManager.lastDriverIdPlusOne();
+        driverManager.addPerson(driver);
+        idManager.lastDriverIdPlusOne();
     }
 
     public void deleteDriver(Driver driver) {
-        driverManager.deleteDriver(driver);
+        driverManager.removePerson(driver);
+    }
+
+    // =========== IdManager =======================================================================
+
+    public int getNextTaskId() {
+        return idManager.getNextTaskId();
+    }
+
+    public int getNextCustomerId() {
+        return idManager.getNextCustomerId();
+    }
+
+    public int getNextDriverId() {
+        return idManager.getNextDriverId();
+    }
+
+    public IdManager getIdManager() {
+        return idManager;
     }
 
     // =========== Filtered Person List Accessors =============================================================
@@ -276,36 +335,9 @@ public class ModelManager implements Model {
     }
 
     @Override
-    public ObservableList<Customer> getFilteredCustomerList() {
-        return filteredCustomers;
-    }
-
-    @Override
-    public ObservableList<Driver> getFilteredDriverList() {
-        return filteredDrivers;
-    }
-
-    @Override
-    public ObservableList<Task> getFilteredTaskList() {
-        return filteredTasks;
-    }
-
-    @Override
     public void updateFilteredPersonList(Predicate<Person> predicate) {
         requireNonNull(predicate);
         filteredPersons.setPredicate(predicate);
-    }
-
-    @Override
-    public void updateFilteredCustomerList(Predicate<Customer> predicate) {
-        requireNonNull(predicate);
-        filteredCustomers.setPredicate(predicate);
-    }
-
-    @Override
-    public void updateFilteredDriverList(Predicate<Driver> predicate) {
-        requireNonNull(predicate);
-        filteredDrivers.setPredicate(predicate);
     }
 
     @Override
@@ -328,8 +360,76 @@ public class ModelManager implements Model {
 
         // state check
         ModelManager other = (ModelManager) obj;
-        return addressBook.equals(other.addressBook) && userPrefs.equals(other.userPrefs)
+        return customerManager.equals(other.getCustomerManager())
+                && driverManager.equals(other.getDriverManager())
+                && taskManager.equals(other.getTaskManager())
+                && addressBook.equals(other.addressBook)
+                && userPrefs.equals(other.userPrefs)
                 && filteredPersons.equals(other.filteredPersons);
     }
 
+    // =========== Filtered Task List Accessors =============================================================
+
+    /**
+     * Returns an unmodifiable view of the list of {@code Task} backed by the
+     * internal list of {@code versionedAddressBook}
+     */
+    @Override
+    public ObservableList<Task> getFilteredTaskList() {
+        return filteredTasks;
+    }
+
+    @Override
+    public void updateFilteredTaskList(Predicate<Task> predicate, FilteredList<Task> list) {
+        requireNonNull(predicate);
+        list.setPredicate(predicate);
+    }
+
+    /**
+     * Returns an observable view of the list of that is filtered to unassigned tasks
+     */
+    @Override
+    public ObservableList<Task> getUnassignedTaskList() {
+        updateFilteredTaskList(PREDICATE_SHOW_UNASSIGNED, unassignedTasks);
+        return unassignedTasks;
+    }
+
+    /**
+     * Returns an observable view of the list of that is filtered to assigned tasks
+     */
+    @Override
+    public ObservableList<Task> getAssignedTaskList() {
+        updateFilteredTaskList(PREDICATE_SHOW_ASSIGNED, filteredTasks);
+        return filteredTasks;
+    }
+
+    // =========== Filtered Customer List Accessors =============================================================
+
+    /**
+     * Returns an unmodifiable view of the list of {@code Person} backed by the
+     * internal list of {@code versionedAddressBook}
+     */
+    @Override
+    public ObservableList<Customer> getFilteredCustomerList() {
+        return filteredCustomers;
+    }
+
+    @Override
+    public void updateFilteredCustomerList(Predicate<Customer> predicate) {
+        requireNonNull(predicate);
+        filteredCustomers.setPredicate(predicate);
+    }
+
+    // =========== Filtered Customer List Accessors =============================================================
+
+    @Override
+    public ObservableList<Driver> getFilteredDriverList() {
+        return filteredDrivers;
+    }
+
+    @Override
+    public void updateFilteredDriverList(Predicate<Driver> predicate) {
+        requireNonNull(predicate);
+        filteredDrivers.setPredicate(predicate);
+    }
 }

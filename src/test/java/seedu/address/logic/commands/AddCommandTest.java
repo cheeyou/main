@@ -14,10 +14,14 @@ import java.util.function.Predicate;
 import org.junit.jupiter.api.Test;
 
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.model.CustomerManager;
+import seedu.address.model.DriverManager;
 import seedu.address.model.Model;
 import seedu.address.model.ReadOnlyUserPrefs;
+import seedu.address.model.id.IdManager;
 import seedu.address.model.legacy.AddressBook;
 import seedu.address.model.legacy.ReadOnlyAddressBook;
 import seedu.address.model.person.Customer;
@@ -26,7 +30,6 @@ import seedu.address.model.person.Person;
 import seedu.address.model.task.Task;
 import seedu.address.model.task.TaskManager;
 import seedu.address.testutil.PersonBuilder;
-
 
 public class AddCommandTest {
 
@@ -154,6 +157,11 @@ public class AddCommandTest {
         }
 
         @Override
+        public void resetCentralManager() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
         public void addTask(Task task) {
             throw new AssertionError("This method should not be called.");
         };
@@ -206,12 +214,32 @@ public class AddCommandTest {
         @Override
         public boolean hasCustomer(int customerId) {
             throw new AssertionError("This method should not be called.");
-        };
+        }
+
+        @Override
+        public ObservableList<Task> getUnassignedTaskList() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public ObservableList<Task> getAssignedTaskList() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public ObservableList<Task> getFilteredTaskList() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void updateFilteredTaskList(Predicate<Task> predicate, FilteredList<Task> list) {
+            throw new AssertionError("This method should not be called.");
+        }
 
         @Override
         public Customer getCustomer(int customerId) {
             throw new AssertionError("This method should not be called.");
-        };
+        }
 
         @Override
         public void setCustomer(Customer customerToEdit, Customer editedCustomer) {
@@ -237,6 +265,11 @@ public class AddCommandTest {
         };
 
         @Override
+        public CustomerManager getCustomerManager() {
+            throw new AssertionError("This method should not be called.");
+        };
+
+        @Override
         public boolean hasDriver(Driver driver) {
             throw new AssertionError("This method should not be called.");
         }
@@ -255,6 +288,7 @@ public class AddCommandTest {
         public Driver getDriver(int driverId) {
             throw new AssertionError("This method should not be called.");
         }
+
         @Override
         public void addDriver(Driver driver) {
             throw new AssertionError("This method should not be called.");
@@ -272,6 +306,37 @@ public class AddCommandTest {
         public void deleteDriver(Driver driver) {
             throw new AssertionError("This method should not be called.");
         };
+
+        @Override
+        public DriverManager getDriverManager() {
+            throw new AssertionError("This method should not be called.");
+        };
+
+        @Override
+        public int getNextTaskId() {
+            throw new AssertionError("This method should not be called.");
+        };
+
+        @Override
+        public int getNextCustomerId() {
+            throw new AssertionError("This method should not be called.");
+        };
+
+        @Override
+        public int getNextDriverId() {
+            throw new AssertionError("This method should not be called.");
+        };
+
+        @Override
+        public IdManager getIdManager() {
+            throw new AssertionError("This method should not be called.");
+        };
+
+        @Override
+        public void viewDriverTask(Person driverToView) {
+            throw new AssertionError("This method should not be called.");
+        }
+
     }
 
     /**

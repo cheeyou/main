@@ -146,18 +146,14 @@ public class JsonAdaptedTask {
         Task task = new Task(modelTaskId, modelDescription, modelDate);
         task.setCustomer(modelCustomer);
 
-        if (driverId != null) {
+        if (driverId != null && duration != null) {
             Optional<Driver> driverOptional = driverManager.getOptionalDriver(Integer.parseInt(driverId));
             if (driverOptional.isEmpty()) {
                 throw new IllegalValueException(Driver.MESSAGE_INVALID_ID);
             }
 
-            task.setDriver(driverOptional);
-        }
-        //if driver is not null, duration must be not null as well.
-        if (duration != null) {
             final EventTime modelEventTime = EventTime.parse(duration);
-            task.setEventTime(Optional.of(modelEventTime));
+            task.setDriverAndEventTime(driverOptional, Optional.of(modelEventTime));
         }
 
         //status cannot be null
@@ -165,16 +161,13 @@ public class JsonAdaptedTask {
             throw new IllegalValueException(TaskStatus.MESSAGE_CONSTRAINTS);
         }
 
-        if (status.equals(TaskStatus.INCOMPLETE.toString())) {
-            task.setStatus(TaskStatus.INCOMPLETE);
-        } else if (status.equals(TaskStatus.ON_GOING.toString())) {
-            task.setStatus(TaskStatus.ON_GOING);
-
+        //if status is incomplete, then ignore, because by default is incomplete
+        if (status.equals(TaskStatus.ON_GOING.toString())) {
             //if status is ongoing, then load the eventTime to driver schedule
             Driver driver = driverManager.getDriver(Integer.parseInt(driverId));
             Schedule driverSchedule = driver.getSchedule();
             driverSchedule.add(EventTime.parse(duration));
-        } else {
+        } else if (status.equals(TaskStatus.COMPLETED.toString())) {
             //task is completed
             task.setStatus(TaskStatus.COMPLETED);
         }

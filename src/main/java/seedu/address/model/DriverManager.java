@@ -17,10 +17,6 @@ public class DriverManager extends EntityManager<Driver> {
         super();
     }
 
-    public boolean hasDriver(Driver driver) {
-        return super.hasPerson(driver);
-    }
-
     /**
      * Checks if the driver list has a driver with {@code int customerId}.
      *
@@ -32,17 +28,6 @@ public class DriverManager extends EntityManager<Driver> {
                 .anyMatch(driver -> driver.getId() == driverId);
     }
 
-    public void deleteDriver(Driver target) {
-        super.removePerson(target);
-    }
-
-    public void addDriver(Driver driver) {
-        super.addPerson(driver);
-    }
-
-    public void setDriver(Driver driver, Driver editedDriver) {
-        super.setPerson(driver, editedDriver);
-    }
 
     /**
      * Retrieve driver using its unique driver id.
@@ -73,5 +58,19 @@ public class DriverManager extends EntityManager<Driver> {
                 .filter(driver -> driver.getId() == driverId)
                 .findFirst()
                 .orElseThrow(PersonNotFoundException::new);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        DriverManager otherObject = (DriverManager) o;
+        return getDriverList().equals(otherObject.getDriverList());
     }
 }

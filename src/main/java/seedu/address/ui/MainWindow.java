@@ -4,11 +4,13 @@ import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
@@ -31,9 +33,12 @@ public class MainWindow extends UiPart<Stage> {
     private Logic logic;
 
     // Independent Ui parts residing in this Ui container
-    private PersonListPanel personListPanel;
     private ResultDisplay resultDisplay;
     private HelpWindow helpWindow;
+    private AssignedTaskListPanel assignedTaskListPanel;
+    private UnassignedTaskListPanel unassignedTaskListPanel;
+    private CustomerListPanel customerListPanel;
+    private DriverListPanel driverListPanel;
 
     @FXML
     private StackPane commandBoxPlaceholder;
@@ -42,13 +47,22 @@ public class MainWindow extends UiPart<Stage> {
     private MenuItem helpMenuItem;
 
     @FXML
-    private StackPane personListPanelPlaceholder;
-
-    @FXML
     private StackPane resultDisplayPlaceholder;
 
     @FXML
     private StackPane statusbarPlaceholder;
+
+    @FXML
+    private StackPane assignedTaskListPanelPlaceholder;
+
+    @FXML
+    private StackPane unassignedTaskListPanelPlaceholder;
+
+    @FXML
+    private StackPane customerListPanelPlaceholder;
+
+    @FXML
+    private StackPane driverListPanelPlaceholder;
 
     public MainWindow(Stage primaryStage, Logic logic) {
         super(FXML, primaryStage);
@@ -107,8 +121,17 @@ public class MainWindow extends UiPart<Stage> {
      * Fills up all the placeholders of this window.
      */
     void fillInnerParts() {
-        personListPanel = new PersonListPanel(logic.getFilteredPersonList());
-        personListPanelPlaceholder.getChildren().add(personListPanel.getRoot());
+        assignedTaskListPanel = new AssignedTaskListPanel(logic.getFilteredAssignedTaskList());
+        assignedTaskListPanelPlaceholder.getChildren().add(assignedTaskListPanel.getRoot());
+
+        unassignedTaskListPanel = new UnassignedTaskListPanel(logic.getFilteredUnassignedTaskList());
+        unassignedTaskListPanelPlaceholder.getChildren().add(unassignedTaskListPanel.getRoot());
+
+        customerListPanel = new CustomerListPanel(logic.getFilteredCustomerList());
+        customerListPanelPlaceholder.getChildren().add(customerListPanel.getRoot());
+
+        driverListPanel = new DriverListPanel(logic.getFilteredDriverList());
+        driverListPanelPlaceholder.getChildren().add(driverListPanel.getRoot());
 
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
@@ -126,10 +149,15 @@ public class MainWindow extends UiPart<Stage> {
     private void setWindowDefaultSize(GuiSettings guiSettings) {
         primaryStage.setHeight(guiSettings.getWindowHeight());
         primaryStage.setWidth(guiSettings.getWindowWidth());
-        if (guiSettings.getWindowCoordinates() != null) {
-            primaryStage.setX(guiSettings.getWindowCoordinates().getX());
-            primaryStage.setY(guiSettings.getWindowCoordinates().getY());
-        }
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+        primaryStage.setX(bounds.getMinX());
+        primaryStage.setY(bounds.getMinY());
+        primaryStage.setWidth(bounds.getWidth());
+        primaryStage.setHeight(bounds.getHeight());
+        //maximize the window size, and disable resize button.
+        primaryStage.setMaximized(true);
+        primaryStage.setResizable(false);
     }
 
     /**
@@ -160,8 +188,12 @@ public class MainWindow extends UiPart<Stage> {
         primaryStage.hide();
     }
 
-    public PersonListPanel getPersonListPanel() {
-        return personListPanel;
+    public AssignedTaskListPanel getTaskListPanel() {
+        return assignedTaskListPanel;
+    }
+
+    public CustomerListPanel getCustomerListPanel() {
+        return customerListPanel;
     }
 
     /**
