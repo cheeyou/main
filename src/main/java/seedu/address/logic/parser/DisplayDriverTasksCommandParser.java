@@ -14,14 +14,18 @@ import seedu.address.model.person.DriverIsTheSamePredicate;
  */
 public class DisplayDriverTasksCommandParser implements Parser<DisplayDriverTasksCommand> {
 
-    private static ObservableList<Driver> driverList;  //this list should be the one from findDriverCommand
+    private static ObservableList<Driver> driverList;
 
     public void setDriverList(ObservableList<Driver> driverList) {
         this.driverList = driverList;
     }
 
+    /**
+     * Parses the given {@code String} of arguments in the context of the DisplayDriverTasksCommand
+     * and returns a DisplayDriverTaskCommand object for execution.
+     * @throws ParseException if the user input does not conform the expected format
+     */
     public DisplayDriverTasksCommand parse(String args) throws ParseException {
-
         String trimmedArgs = args.trim();
         if (trimmedArgs.isEmpty()) {
             throw new ParseException(
@@ -30,7 +34,7 @@ public class DisplayDriverTasksCommandParser implements Parser<DisplayDriverTask
 
         int driverIndex = Integer.parseInt(trimmedArgs);
         Driver driver = driverList.get(driverIndex - 1);
-
+        System.out.println(driver);
         return new DisplayDriverTasksCommand(new DriverIsTheSamePredicate(driver));
     }
 

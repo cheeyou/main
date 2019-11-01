@@ -341,12 +341,6 @@ public class ModelManager implements Model {
     }
 
     @Override
-    public void updateFilteredTaskList(Predicate<Task> predicate) {
-        requireNonNull(predicate);
-        filteredTasks.setPredicate(predicate);
-    }
-
-    @Override
     public boolean equals(Object obj) {
         // short circuit if same object
         if (obj == this) {
@@ -383,6 +377,12 @@ public class ModelManager implements Model {
     public void updateFilteredTaskList(Predicate<Task> predicate, FilteredList<Task> list) {
         requireNonNull(predicate);
         list.setPredicate(predicate);
+    }
+
+    @Override
+    public void updateFilteredTaskList(Predicate<Task> predicate) {
+        requireNonNull(predicate);
+        filteredTasks.setPredicate(predicate);
     }
 
     /**

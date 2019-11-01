@@ -10,7 +10,7 @@ import seedu.address.model.task.TaskDescriptionContainsStringPredicate;
  * Finds and lists all tasks in address book whose name contains the phrase.
  * Keyword matching is case insensitive.
  */
-public class FindTaskCommand extends Command{
+public class FindTaskCommand extends Command {
 
     public static final String COMMAND_WORD = "findT";
 

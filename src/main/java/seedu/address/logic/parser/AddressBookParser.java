@@ -6,7 +6,26 @@ import static seedu.address.commons.core.Messages.MESSAGE_UNKNOWN_COMMAND;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import seedu.address.logic.commands.*;
+import seedu.address.logic.commands.AddCustomerCommand;
+import seedu.address.logic.commands.AddDriverCommand;
+import seedu.address.logic.commands.AddTaskCommand;
+import seedu.address.logic.commands.AssignCommand;
+import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.commands.Command;
+import seedu.address.logic.commands.DeleteIdCommand;
+import seedu.address.logic.commands.DisplayDriverTasksCommand;
+import seedu.address.logic.commands.DoneCommand;
+import seedu.address.logic.commands.EditCustomerCommand;
+import seedu.address.logic.commands.EditDriverCommand;
+import seedu.address.logic.commands.EditTaskCommand;
+import seedu.address.logic.commands.ExitCommand;
+import seedu.address.logic.commands.FindCustomerCommand;
+import seedu.address.logic.commands.FindDriverCommand;
+import seedu.address.logic.commands.FindTaskCommand;
+import seedu.address.logic.commands.FreeCommand;
+import seedu.address.logic.commands.HelpCommand;
+import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.ReadIdCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -18,6 +37,16 @@ public class AddressBookParser {
      * Used for initial separation of command word and args.
      */
     private static final Pattern BASIC_COMMAND_FORMAT = Pattern.compile("(?<commandWord>\\S+)(?<arguments>.*)");
+
+    /**
+     * Parses user input into command for execution.
+     *
+     * @return the command based on the user input
+     * @throws ParseException if the user input does not conform the expected format
+     */
+    public Command parseCommand() throws ParseException {
+        return parseCommand();
+    }
 
     /**
      * Parses user input into command for execution.

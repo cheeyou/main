@@ -50,6 +50,10 @@ public class Driver extends Person {
         return schedule.remove(durationToRemove);
     }
 
+    public void addToSchedule(EventTime durationToAdd) throws SchedulingException {
+        schedule.add(durationToAdd);
+    }
+
     public boolean isScheduleAvailable(EventTime durationToAdd) {
         return schedule.isAvailable(durationToAdd);
     }
