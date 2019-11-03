@@ -1,7 +1,5 @@
 package seedu.address.model.person;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.function.Predicate;
 
 import seedu.address.commons.util.StringUtil;
@@ -19,7 +17,10 @@ public class DriverIsTheSamePredicate implements Predicate<Task> {
 
     @Override
     public boolean test(Task task) {
-        requireNonNull(task.getDriver().get());
+        //case where task is not assigned to any driver
+        if(task.getDriver().isEmpty()) {
+            return false;
+        }
         return StringUtil.isTheSameDriver(driverToCompare, task.getDriver().get());
     }
 }

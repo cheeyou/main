@@ -383,6 +383,13 @@ public class ModelManager implements Model {
     public void updateFilteredTaskList(Predicate<Task> predicate) {
         requireNonNull(predicate);
         filteredTasks.setPredicate(predicate);
+        for(Task task : filteredTasks) {
+            System.out.println(task);
+        }
+    }
+
+    public void updateAssignedTaskList() {
+        updateFilteredTaskList(PREDICATE_SHOW_ASSIGNED);
     }
 
     /**

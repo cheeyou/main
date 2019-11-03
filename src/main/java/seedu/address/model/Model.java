@@ -140,6 +140,11 @@ public interface Model {
     boolean hasTaskBelongsToCustomer(Customer customer);
 
     /**
+     * A control-check update to ensure that the AssignedTaskList will be updated to display the default assigned tasks.
+     */
+    void updateAssignedTaskList();
+
+    /**
      * Returns an unmodifiable view of the filtered unassigned task list.
      */
     ObservableList<Task> getUnassignedTaskList();
