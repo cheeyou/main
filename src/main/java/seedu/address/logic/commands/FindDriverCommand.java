@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 import seedu.address.commons.core.Messages;
 import seedu.address.logic.parser.DisplayDriverTasksCommandParser;
 import seedu.address.model.Model;
-import seedu.address.model.person.DriverNameContainsStringPredicate;
+import seedu.address.model.person.NameContainsStringPredicate;
 
 /**
  * Finds and lists all drivers in address book whose name contains the phrase.
@@ -20,9 +20,9 @@ public class FindDriverCommand extends Command {
             + "Parameters: PHRASE [MORE PHRASE]\n"
             + "Example: " + COMMAND_WORD + " alex ch";
 
-    private final DriverNameContainsStringPredicate predicate;
+    private final NameContainsStringPredicate predicate;
 
-    public FindDriverCommand(DriverNameContainsStringPredicate predicate) {
+    public FindDriverCommand(NameContainsStringPredicate predicate) {
         this.predicate = predicate;
     }
 

@@ -222,6 +222,11 @@ public class AddCommandTest {
         }
 
         @Override
+        public void updateAssignedTaskList() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
         public ObservableList<Task> getAssignedTaskList() {
             throw new AssertionError("This method should not be called.");
         }

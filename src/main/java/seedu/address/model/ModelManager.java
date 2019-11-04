@@ -422,7 +422,7 @@ public class ModelManager implements Model {
     }
 
     @Override
-    public void updateFilteredCustomerList(Predicate<Customer> predicate) {
+    public void updateFilteredCustomerList(Predicate<Person> predicate) {
         requireNonNull(predicate);
         filteredCustomers.setPredicate(predicate);
     }
@@ -435,7 +435,7 @@ public class ModelManager implements Model {
     }
 
     @Override
-    public void updateFilteredDriverList(Predicate<Driver> predicate) {
+    public void updateFilteredDriverList(Predicate<Person> predicate) {
         requireNonNull(predicate);
         filteredDrivers.setPredicate(predicate);
     }

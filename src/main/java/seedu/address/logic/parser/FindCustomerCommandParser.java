@@ -4,10 +4,10 @@ import static seedu.address.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT
 
 import seedu.address.logic.commands.FindCustomerCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.person.CustomerNameContainsStringPredicate;
+import seedu.address.model.person.NameContainsStringPredicate;
 
 /**
- * Parses input arguments and creates a new FindTaskCommand object
+ * Parses input arguments and creates a new FindCustomerCommand object
  */
 public class FindCustomerCommandParser implements Parser<FindCustomerCommand> {
 
@@ -23,6 +23,6 @@ public class FindCustomerCommandParser implements Parser<FindCustomerCommand> {
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCustomerCommand.MESSAGE_USAGE));
         }
 
-        return new FindCustomerCommand(new CustomerNameContainsStringPredicate(trimmedArgs));
+        return new FindCustomerCommand(new NameContainsStringPredicate(trimmedArgs));
     }
 }

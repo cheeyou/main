@@ -32,9 +32,8 @@ public class DisplayDriverTasksCommandParser implements Parser<DisplayDriverTask
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, DisplayDriverTasksCommand.MESSAGE_USAGE));
         }
 
-        int driverIndex = Integer.parseInt(trimmedArgs);
+        int driverIndex = ParserUtil.parseId(trimmedArgs);
         Driver driver = driverList.get(driverIndex - 1);
-        System.out.println(driver);
         return new DisplayDriverTasksCommand(new DriverIsTheSamePredicate(driver));
     }
 

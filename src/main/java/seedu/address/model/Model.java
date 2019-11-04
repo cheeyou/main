@@ -24,8 +24,6 @@ public interface Model {
      * {@code Predicate} that always evaluate to true
      */
     Predicate<Person> PREDICATE_SHOW_ALL_PERSONS = unused -> true;
-    Predicate<Customer> PREDICATE_SHOW_ALL_CUSTOMERS = unused -> true;
-    Predicate<Driver> PREDICATE_SHOW_ALL_DRIVERS = unused -> true;
 
     /**
      * {@code Predicate} that filters the task to incomplete status
@@ -215,9 +213,9 @@ public interface Model {
      *
      * @throws NullPointerException if {@code predicate} is null.
      */
-    void updateFilteredCustomerList(Predicate<Customer> predicate);
+    void updateFilteredCustomerList(Predicate<Person> predicate);
 
-    void updateFilteredDriverList(Predicate<Driver> predicate);
+    void updateFilteredDriverList(Predicate<Person> predicate);
 
     /**
      * Returns an unmodifiable view of the filtered driver list.
