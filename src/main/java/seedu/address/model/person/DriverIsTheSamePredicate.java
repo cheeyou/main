@@ -18,7 +18,7 @@ public class DriverIsTheSamePredicate implements Predicate<Task> {
     @Override
     public boolean test(Task task) {
         //case where task is not assigned to any driver
-        if(task.getDriver().isEmpty()) {
+        if (task.getDriver().isEmpty()) {
             return false;
         }
         return StringUtil.isTheSameDriver(driverToCompare, task.getDriver().get());

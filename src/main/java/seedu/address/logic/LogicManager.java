@@ -78,7 +78,7 @@ public class LogicManager implements Logic {
 
     @Override
     public ObservableList<Task> getFilteredAssignedTaskList() {
-        if(model.getAssignedTaskList() == null) {
+        if (model.getAssignedTaskList() == null) {
             model.updateAssignedTaskList();
         }
         return model.getAssignedTaskList();
