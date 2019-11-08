@@ -20,6 +20,7 @@ import seedu.address.model.person.Person;
 import seedu.address.model.task.Task;
 import seedu.address.model.task.TaskList;
 import seedu.address.model.task.TaskManager;
+import seedu.address.model.task.VersionedTaskManager;
 import seedu.address.storage.CentralManager;
 
 /**
@@ -34,8 +35,8 @@ public class ModelManager implements Model {
     private final FilteredList<Task> filteredTasks;
     private final FilteredList<Task> unassignedTasks;
 
-    private final FilteredList<Customer> filteredCustomers;
-    private final FilteredList<Driver> filteredDrivers;
+    private FilteredList<Customer> filteredCustomers;
+    private FilteredList<Driver> filteredDrivers;
 
     private final TaskManager taskManager;
     private final CustomerManager customerManager;
@@ -86,6 +87,16 @@ public class ModelManager implements Model {
         filteredDrivers = new FilteredList<>(driverManager.getDriverList());
         filteredTasks = new FilteredList<>(taskManager.getList());
         unassignedTasks = new FilteredList<>(taskManager.getList());
+
+        TaskManager initialTaskManager = new TaskManager();
+        initialTaskManager.setTaskList(this.getTaskManager().getTaskList());
+        CustomerManager initialCustomerManager = new CustomerManager();
+        initialCustomerManager.setPersons(this.getCustomerManager().getCustomerList());
+        DriverManager initialDriverManager = new DriverManager();
+        initialDriverManager.setPersons(this.getDriverManager().getDriverList());
+        new VersionedTaskManager(initialTaskManager);
+        new VersionedCustomerManager(initialCustomerManager);
+        new VersionedDriverManager(initialDriverManager);
     }
 
     public ModelManager() {
@@ -427,7 +438,7 @@ public class ModelManager implements Model {
         filteredCustomers.setPredicate(predicate);
     }
 
-    // =========== Filtered Customer List Accessors =============================================================
+    // =========== Filtered Driver List Accessors =============================================================
 
     @Override
     public ObservableList<Driver> getFilteredDriverList() {
@@ -438,5 +449,179 @@ public class ModelManager implements Model {
     public void updateFilteredDriverList(Predicate<Person> predicate) {
         requireNonNull(predicate);
         filteredDrivers.setPredicate(predicate);
+    }
+
+    // =========== Methods for undo and redo ==================================================================
+
+    /**
+     * Commits the latest version of (@code TaskManager) to the (@code VersionedTaskManager).
+     */
+    public void commitTaskManager() {
+        TaskManager latestVersion = new TaskManager();
+        latestVersion.setTaskList(this.taskManager.getTaskList());
+        VersionedTaskManager.commit(latestVersion);
+    }
+
+    /**
+     * Commits the latest version of (@code CustomerManager) to the (@code VersionedCustomerManager).
+     */
+    public void commitCustomerManager() {
+        CustomerManager latestVersion = new CustomerManager();
+        latestVersion.setPersons(this.getCustomerManager().getCustomerList());
+        VersionedCustomerManager.commit(latestVersion);
+    }
+
+    /**
+     * Commits the latest version of (@code DriverManager) to the (@code VersionedDriverManager).
+     */
+    public void commitDriverManager() {
+        DriverManager latestVersion = new DriverManager();
+        latestVersion.setPersons(this.getDriverManager().getDriverList());
+        VersionedDriverManager.commit(latestVersion);
+    }
+
+    /**
+     * Commits all managers.
+     */
+    public void commitManagers() {
+        commitTaskManager();
+        commitCustomerManager();
+        commitDriverManager();
+    }
+
+    /**
+     * Checks whether all the managers can be reverted to a previous state.
+     *
+     * @return whether all managers can be reverted to a previous state.
+     */
+    public boolean canUndoManagers() {
+        boolean canUndoTaskManager = (VersionedTaskManager.getCurrentStatePointer() != 0);
+        boolean canUndoCustomerManager = (VersionedCustomerManager.getCurrentStatePointer() != 0);
+        boolean canUndoDriverManager = (VersionedDriverManager.getCurrentStatePointer() != 0);
+        return canUndoTaskManager && canUndoCustomerManager && canUndoDriverManager;
+    }
+
+    /**
+     * Reverts (@code TaskManager) to its previous state.
+     */
+    public void undoTaskManager() {
+        TaskManager previousVersion = VersionedTaskManager.undo();
+        this.taskManager.setTaskList(previousVersion.getTaskList());
+    }
+
+    /**
+     * Reverts (@code CustomerManager) to its previous state.
+     */
+    public void undoCustomerManager() {
+        CustomerManager previousVersion = VersionedCustomerManager.undo();
+        this.customerManager.setPersons(previousVersion.getCustomerList());
+    }
+
+    /**
+     * Reverts (@code DriverManager) to its previous state.
+     */
+    public void undoDriverManager() {
+        DriverManager previousVersion = VersionedDriverManager.undo();
+        this.driverManager.setPersons(previousVersion.getDriverList());
+    }
+
+    /**
+     * Reverts all managers to their previous state.
+     */
+    public void undoManagers() {
+        undoTaskManager();
+        undoCustomerManager();
+        undoDriverManager();
+    }
+
+    /**
+     * Checks whether (@code TaskManager) can go to a next state.
+     *
+     * @return whether (@code TaskManager) can go to a next state.
+     */
+    public boolean canRedoTaskManager() {
+        int currentStatePointerIndex = VersionedTaskManager.getCurrentStatePointer();
+        int currentStateListSize = VersionedTaskManager.getTaskManagerStateList().size();
+        return currentStatePointerIndex != currentStateListSize - 1;
+    }
+
+    /**
+     * Checks whether (@code CustomerManager) can go to a next state.
+     *
+     * @return whether (@code CustomerManager) can go to a next state.
+     */
+    public boolean canRedoCustomerManager() {
+        int currentStatePointerIndex = VersionedCustomerManager.getCurrentStatePointer();
+        int currentStateListSize = VersionedCustomerManager.getCustomerManagerStateList().size();
+        return currentStatePointerIndex != currentStateListSize - 1;
+    }
+
+    /**
+     * Checks whether (@code DriverManager) can go to a next state.
+     *
+     * @return whether (@code DriverManager) can go to a next state.
+     */
+    public boolean canRedoDriverManager() {
+        int currentStatePointerIndex = VersionedDriverManager.getCurrentStatePointer();
+        int currentStateListSize = VersionedDriverManager.getDriverManagerStateList().size();
+        return currentStatePointerIndex != currentStateListSize - 1;
+    }
+
+    /**
+     * Checks whether all managers can go to a next state.
+     *
+     * @return whether all managers can go to a next state.
+     */
+    public boolean canRedoManagers() {
+        return canRedoTaskManager() && canRedoCustomerManager() && canRedoDriverManager();
+    }
+
+    /**
+     * Reverts (@code TaskManager) to its next state.
+     */
+    public void redoTaskManager() {
+        TaskManager nextVersion = VersionedTaskManager.redo();
+        this.taskManager.setTaskList(nextVersion.getTaskList());
+    }
+
+    /**
+     * Reverts (@code CustomerManager) to its next state.
+     */
+    public void redoCustomerManager() {
+        CustomerManager nextVersion = VersionedCustomerManager.redo();
+        this.customerManager.setPersons(nextVersion.getCustomerList());
+    }
+
+    /**
+     * Reverts (@code DriverManager) to its next state.
+     */
+    public void redoDriverManager() {
+        DriverManager nextVersion = VersionedDriverManager.redo();
+        this.driverManager.setPersons(nextVersion.getDriverList());
+    }
+
+    /**
+     * Reverts all managers to their next state.
+     */
+    public void redoManagers() {
+        redoTaskManager();
+        redoCustomerManager();
+        redoDriverManager();
+    }
+
+    /**
+     * Checks whether the versioned lists of all managers should be shortened
+     */
+    public boolean shouldTruncateManagers() {
+        return !canRedoDriverManager();
+    }
+
+    /**
+     * Shortens the versioned lists of all managers
+     */
+    public void truncateManagers() {
+        VersionedCustomerManager.truncateList();
+        VersionedDriverManager.truncateList();
+        VersionedTaskManager.truncateList();
     }
 }

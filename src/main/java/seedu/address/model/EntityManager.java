@@ -119,4 +119,5 @@ public class EntityManager<T extends Person> implements ReadOnlyEntityManager<T>
     public int hashCode() {
         return persons.hashCode();
     }
+
 }

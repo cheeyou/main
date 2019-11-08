@@ -22,7 +22,11 @@ public class ClearCommand extends Command {
     @Override
     public CommandResult execute(Model model) {
         requireNonNull(model);
+        if (model.shouldTruncateManagers()) {
+            model.truncateManagers();
+        }
         model.resetCentralManager();
+        model.commitManagers();
         return new CommandResult(MESSAGE_SUCCESS);
     }
 }

@@ -83,6 +83,11 @@ public class AssignCommand extends Command {
 
         forceAssign(driver, task, eventTime);
 
+        if (model.shouldTruncateManagers()) {
+            model.truncateManagers();
+        }
+        model.commitManagers();
+
         // TODO: update GUI
         return new CommandResult(String.format(MESSAGE_ASSIGN_SUCCESS,
                 task.getId(), driver.getName().fullName, eventTime.toString()));

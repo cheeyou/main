@@ -23,6 +23,10 @@ public class TaskManager {
         return tasks.getList();
     }
 
+    public TaskList getTaskList() {
+        return tasks;
+    }
+
     //task list operations
 
     public void addTask(Task newTask) {

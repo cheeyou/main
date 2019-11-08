@@ -229,4 +229,42 @@ public interface Model {
     int getNextDriverId();
 
     IdManager getIdManager();
+
+    void commitTaskManager();
+
+    void commitCustomerManager();
+
+    void commitDriverManager();
+
+    void commitManagers();
+
+    boolean canUndoManagers();
+
+    void undoTaskManager();
+
+    void undoCustomerManager();
+
+    void undoDriverManager();
+
+    void undoManagers();
+
+    boolean canRedoTaskManager();
+
+    boolean canRedoCustomerManager();
+
+    boolean canRedoDriverManager();
+
+    boolean canRedoManagers();
+
+    void redoTaskManager();
+
+    void redoCustomerManager();
+
+    void redoDriverManager();
+
+    void redoManagers();
+
+    boolean shouldTruncateManagers();
+
+    void truncateManagers();
 }

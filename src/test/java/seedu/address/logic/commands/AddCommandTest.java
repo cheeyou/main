@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.CustomerManager;
@@ -261,7 +262,7 @@ public class AddCommandTest {
             throw new AssertionError("This method should not be called.");
         };
 
-        public void updateFilteredCustomerList(Predicate<Customer> predicate) {
+        public void updateFilteredCustomerList(Predicate<Person> predicate) {
             throw new AssertionError("This method should not be called.");
         }
 
@@ -305,7 +306,7 @@ public class AddCommandTest {
         };
 
         @Override
-        public void updateFilteredDriverList(Predicate<Driver> predicate) {
+        public void updateFilteredDriverList(Predicate<Person> predicate) {
             throw new AssertionError("This method should not be called.");
         }
 
@@ -348,6 +349,100 @@ public class AddCommandTest {
             throw new AssertionError("This method should not be called.");
         }
 
+        @Override
+        public void commitTaskManager() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void commitCustomerManager() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void commitDriverManager() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void commitManagers() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public boolean canUndoManagers() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void undoTaskManager() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void undoCustomerManager() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void undoDriverManager() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void undoManagers() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public boolean canRedoTaskManager() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public boolean canRedoCustomerManager() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public boolean canRedoDriverManager() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public boolean canRedoManagers() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void redoTaskManager() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void redoCustomerManager() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void redoDriverManager() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void redoManagers() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public boolean shouldTruncateManagers() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void truncateManagers() {
+            throw new AssertionError("This method should not be called.");
+        }
     }
 
     /**

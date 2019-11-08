@@ -76,6 +76,11 @@ public class FreeCommand extends Command {
 
         freeDriverFromTask(driver, task);
 
+        if (model.shouldTruncateManagers()) {
+            model.truncateManagers();
+        }
+        model.commitManagers();
+
         return new CommandResult(String.format(MESSAGE_FREE_SUCCESS, task.getId(), driver.getName().fullName));
 
     }

@@ -14,4 +14,8 @@ public class Messages {
     public static final String MESSAGE_CUSTOMERS_LISTED_OVERVIEW = "%1$d customers listed!";
     public static final String MESSAGE_DRIVERS_LISTED_OVERVIEW = "%1$d drivers listed!";
     public static final String MESSAGE_TASKS_LISTED_OVERVIEW = "%1$d tasks listed!";
+    public static final String MESSAGE_INVALID_UNDO_REQUEST = "The programme is at its initial state, no commands "
+            + "available to be undone";
+    public static final String MESSAGE_INVALID_REDO_REQUEST = "The programme is at its latest state, no commands "
+            + "available to be redone";
 }
