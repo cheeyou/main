@@ -27,7 +27,7 @@ public class AssignedTaskListPanel extends UiPart<Region> {
     }
 
     /**
-     * Custom {@code ListCell} that displays the graphics of a {@code Task} using a {@code TaskCard}.
+     * Custom {@code ListCell} that displays the graphics of a {@code Task} using a {@code AssignedTaskCard}.
      */
     class AssignedTaskListViewCell extends ListCell<Task> {
         @Override
@@ -38,7 +38,7 @@ public class AssignedTaskListPanel extends UiPart<Region> {
                 setGraphic(null);
                 setText(null);
             } else {
-                setGraphic(new TaskCard(task, getIndex() + 1).getRoot());
+                setGraphic(new AssignedTaskCard(task, getIndex() + 1).getRoot());
             }
         }
     }

@@ -86,6 +86,16 @@ public class LogicManager implements Logic {
     }
 
     @Override
+    public ObservableList<Task> getFilteredCompletedTaskList() {
+        return model.getCompletedTaskList();
+    }
+
+    @Override
+    public ObservableList<Task> getIncompleteTaskList() {
+        return model.getIncompleteTaskList();
+    }
+
+    @Override
     public ObservableList<Driver> getFilteredDriverList() {
         return model.getFilteredDriverList();
     }
@@ -93,6 +103,15 @@ public class LogicManager implements Logic {
     @Override
     public ObservableList<Customer> getFilteredCustomerList() {
         return model.getFilteredCustomerList();
+    }
+
+    @Override
+    public void refreshFilteredTaskList() {
+        model.refreshFilteredTaskList();
+    }
+
+    public boolean isStartAfresh() {
+        return model.isStartAfresh();
     }
 
     @Override

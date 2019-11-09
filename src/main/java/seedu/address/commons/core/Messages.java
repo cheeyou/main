@@ -1,5 +1,8 @@
 package seedu.address.commons.core;
 
+import seedu.address.logic.GlobalClock;
+import seedu.address.model.task.Task;
+
 /**
  * Container for user visible messages.
  */
@@ -18,4 +21,18 @@ public class Messages {
             + "available to be undone";
     public static final String MESSAGE_INVALID_REDO_REQUEST = "The programme is at its latest state, no commands "
             + "available to be redone";
+
+    public static final String MESSAGE_DATA_START_NEW = "Starting with a empty manager. \n"
+            + "If you had data previously, this means that your data file is corrupted";
+
+    public static final String MESSAGE_ASSIGN_SUCCESS = "Assigned #%1$d to %2$s at %3$s";
+    public static final String MESSAGE_ALREADY_ASSIGNED = "This task is already scheduled. ";
+    public static final String MESSAGE_ALREADY_COMPLETED = "This task is completed. You can only assign an "
+            + "incomplete task. ";
+    public static final String MESSAGE_NOT_TODAY = "The task is not scheduled for today. " + "\n"
+            + String.format("Only tasks scheduled for today can be assigned. Today is %s.",
+            GlobalClock.dateToday().format(Task.DATE_FORMAT_FOR_PRINT));
+
+    //for generate pdf
+    public static final String MESSAGE_NO_ASSIGNED_TASK_FOR_THE_DATE = "There's no assigned tasks for %1$s.";
 }

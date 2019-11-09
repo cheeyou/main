@@ -2,6 +2,7 @@ package seedu.address.model.person;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.Objects;
@@ -16,16 +17,21 @@ import seedu.address.model.person.exceptions.SchedulingException;
  * Manages the availability of the owner.
  */
 public class Schedule {
-    public static final String MESSAGE_EMPTY_SCHEDULE = "No task assigned";
-    public static final String MESSAGE_SUGGEST_TIME_FORMAT = "Suggested Time: %s";
-    public static final String MESSAGE_SCHEDULE_CONFLICT = "The duration conflicts with the existing schedule.";
-    public static final String MESSAGE_OUTSIDE_WORKING_HOURS = "The person does not work during the specified time.";
+    public static final String MESSAGE_EMPTY_SCHEDULE = "On standby";
+    public static final String MESSAGE_EARLIER_AVAILABLE = "An earlier time slot is available. ";
+    public static final String MESSAGE_SUGGEST_TIME_FORMAT = "Suggested Time: %s ";
+    public static final String MESSAGE_SCHEDULE_CONFLICT = "The duration conflicts with the existing schedule. ";
+    public static final String MESSAGE_EVENT_START_BEFORE_NOW_FORMAT =
+            "The event cannot happen in the past. The time now is %s. ";
 
-    private static final String START_WORK_TIME = "0900";
-    private static final String END_WORK_TIME = "1800";
+    public static final String START_WORK_TIME = "0900";
+    public static final String END_WORK_TIME = "2100";
+    private static EventTime workingHours = EventTime.parse(START_WORK_TIME, END_WORK_TIME);
 
+    public static final String MESSAGE_OUTSIDE_WORKING_HOURS =
+            String.format("The person does not work during the specified time. Working Hours: %s",
+                    workingHours.toString());
     private NavigableSet<EventTime> schedule;
-    private EventTime workingHours;
 
 
     /**
@@ -33,7 +39,6 @@ public class Schedule {
      */
     public Schedule() {
         this.schedule = new TreeSet<>();
-        this.workingHours = EventTime.parse(START_WORK_TIME, END_WORK_TIME);
 
         EventTime beforeWorkingHours = EventTime.parse("0000", START_WORK_TIME);
         EventTime afterWorkingHours = EventTime.parse(END_WORK_TIME, "2359");
@@ -42,26 +47,22 @@ public class Schedule {
     }
 
 
-    public String getSchedulingSuggestion(EventTime eventTime, LocalTime timeNow) {
-        String suggested = findFirstAvailableSlot(eventTime, timeNow)
-                .filter(x -> !x.equals(eventTime)) // check if the suggested time is different from proposed
-                .map(x -> String.format(MESSAGE_SUGGEST_TIME_FORMAT, x.toString()))
-                .orElse("");
+    public SchedulingSuggestion getSchedulingSuggestion(EventTime eventTime, LocalTime timeNow) {
+        Optional<EventTime> suggestedEventTime = findFirstAvailableSlot(timeNow, eventTime.getDuration());
 
-        String returnSuggestion = suggested.isEmpty() ? "" : "\n" + suggested;
         if (isOutsideWorkingHours(eventTime)) {
-            return MESSAGE_OUTSIDE_WORKING_HOURS + returnSuggestion;
+            return new SchedulingSuggestion(MESSAGE_OUTSIDE_WORKING_HOURS, suggestedEventTime, eventTime);
         }
 
         if (!isAvailable(eventTime)) {
-            return MESSAGE_SCHEDULE_CONFLICT + returnSuggestion;
+            return new SchedulingSuggestion(MESSAGE_SCHEDULE_CONFLICT, suggestedEventTime, eventTime);
         }
 
-        return suggested;
+        return new SchedulingSuggestion("", suggestedEventTime, eventTime);
     }
 
     /**
-     * Blocks off the owner's schedule with the given duration.
+     * Blocks off the owner's schedule with the given duration. This action doesn't check the current time.
      *
      * @param eventTime incoming task
      */
@@ -75,31 +76,41 @@ public class Schedule {
         }
 
         if (!schedule.add(eventTime)) {
-            throw new SchedulingException("An unknown error has occurred.");
+            // this operation should always succeed, and this line shouldn't be called
+            throw new SchedulingException("An unknown error has occurred. The schedule is unable"
+                    + " to add the EventTime");
         }
     }
 
 
     /**
-     * Finds the earliest available EventTime has the same length of proposed, and fits in the schedule.
-     * This method will check against the given time.
+     * Finds the earliest available EventTime has the length of proposed, and fits in the schedule.
+     * This method will check against the input current time.
      *
-     * @param proposed a proposed time slot
      * @param timeNow  time now
+     * @param proposed a proposed duration
      * @return Optional of the earliest EventTime that can fit in the schedule; if the proposed time is already the
      * earliest, return an Optional of the proposed time; if no slot available, return an empty Optional.
      */
-    public Optional<EventTime> findFirstAvailableSlot(EventTime proposed, LocalTime timeNow) {
-        Duration length = proposed.getDuration();
-
-        // get a view of the schedule, from system time to the last EventTime that is later than the proposed time
-        EventTime lastCandidate = schedule.ceiling(proposed);
+    public Optional<EventTime> findFirstAvailableSlot(LocalTime timeNow, Duration proposed) {
+        // get a view of the schedule, from system time to the last EventTime in the schedule
+        EventTime lastCandidate = schedule.last();
 
         // HACK: using a zero minute event time to get the tailset
         EventTime now = new EventTime(timeNow, timeNow);
-        schedule.add(now);
 
-        NavigableSet<EventTime> candidates = schedule.subSet(now, true, lastCandidate, true);
+        EventTime firstCandidate = schedule.lower(now);
+
+        // this should always be non null, since an event starting at midnight will always be the smallest
+        assert firstCandidate != null;
+
+        if (!firstCandidate.overlaps(now)) {
+            schedule.add(now);
+            firstCandidate = now;
+        }
+
+
+        NavigableSet<EventTime> candidates = schedule.subSet(firstCandidate, true, lastCandidate, true);
         Iterator<EventTime> iter = candidates.iterator();
 
         EventTime prev = null;
@@ -109,17 +120,17 @@ public class Schedule {
 
         while (iter.hasNext()) {
             EventTime head = iter.next();
-            boolean canFit = Duration.between(prev.getEnd(), head.getStart()).compareTo(length) >= 0;
+            boolean canFit = Duration.between(prev.getEnd(), head.getStart()).compareTo(proposed) >= 0;
 
             if (canFit) {
-                schedule.remove(now);
-                return Optional.of(new EventTime(prev.getEnd(), length));
+                schedule.remove(now); // it's okay if now doesn't exist in the set
+                return Optional.of(new EventTime(prev.getEnd(), proposed));
             }
 
             prev = head;
         }
 
-        schedule.remove(now);
+        schedule.remove(now); // it's okay if now doesn't exist in the set
         return Optional.empty();
     }
 
@@ -132,7 +143,6 @@ public class Schedule {
     public boolean remove(EventTime eventTime) {
         return schedule.remove(eventTime);
     }
-
 
     private boolean isOutsideWorkingHours(EventTime eventTime) {
         return (eventTime.getEnd().compareTo(eventTime.getStart()) <= 0)
@@ -166,6 +176,7 @@ public class Schedule {
         return this.schedule
                 .subSet(EventTime.parse("0000", START_WORK_TIME), false,
                         EventTime.parse(END_WORK_TIME, "2359"), false).stream()
+                .collect(ArrayList::new, EventTime::append, ArrayList::addAll).stream()
                 .map(EventTime::to24HrString)
                 .reduce((str1, str2) -> str1 + ", " + str2)
                 .orElse(MESSAGE_EMPTY_SCHEDULE);

@@ -1,11 +1,18 @@
 package seedu.address.ui;
 
+import static seedu.address.commons.core.Messages.MESSAGE_DATA_START_NEW;
+import static seedu.address.logic.commands.GoCommand.HISTORY_TAB;
+import static seedu.address.logic.commands.GoCommand.HOME_TAB;
+
 import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
@@ -35,10 +42,12 @@ public class MainWindow extends UiPart<Stage> {
     // Independent Ui parts residing in this Ui container
     private ResultDisplay resultDisplay;
     private HelpWindow helpWindow;
+    private NotificationWindow notificationWindow;
     private AssignedTaskListPanel assignedTaskListPanel;
     private UnassignedTaskListPanel unassignedTaskListPanel;
     private CustomerListPanel customerListPanel;
     private DriverListPanel driverListPanel;
+    private CompletedTaskListPanel completedTaskListPanel;
 
     @FXML
     private StackPane commandBoxPlaceholder;
@@ -63,6 +72,12 @@ public class MainWindow extends UiPart<Stage> {
 
     @FXML
     private StackPane driverListPanelPlaceholder;
+
+    @FXML
+    private StackPane completedTaskListPanelPlaceholder;
+
+    @FXML
+    private TabPane tabPane;
 
     public MainWindow(Stage primaryStage, Logic logic) {
         super(FXML, primaryStage);
@@ -127,6 +142,9 @@ public class MainWindow extends UiPart<Stage> {
         unassignedTaskListPanel = new UnassignedTaskListPanel(logic.getFilteredUnassignedTaskList());
         unassignedTaskListPanelPlaceholder.getChildren().add(unassignedTaskListPanel.getRoot());
 
+        completedTaskListPanel = new CompletedTaskListPanel(logic.getFilteredCompletedTaskList());
+        completedTaskListPanelPlaceholder.getChildren().add(completedTaskListPanel.getRoot());
+
         customerListPanel = new CustomerListPanel(logic.getFilteredCustomerList());
         customerListPanelPlaceholder.getChildren().add(customerListPanel.getRoot());
 
@@ -135,6 +153,10 @@ public class MainWindow extends UiPart<Stage> {
 
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
+
+        if (logic.isStartAfresh()) {
+            resultDisplay.setFeedbackToUser(MESSAGE_DATA_START_NEW);
+        }
 
         StatusBarFooter statusBarFooter = new StatusBarFooter(logic.getAddressBookFilePath());
         statusbarPlaceholder.getChildren().add(statusBarFooter.getRoot());
@@ -164,7 +186,7 @@ public class MainWindow extends UiPart<Stage> {
      * Opens the help window or focuses on it if it's already opened.
      */
     @FXML
-    public void handleHelp() {
+    private void handleHelp() {
         if (!helpWindow.isShowing()) {
             helpWindow.show();
         } else {
@@ -188,12 +210,17 @@ public class MainWindow extends UiPart<Stage> {
         primaryStage.hide();
     }
 
-    public AssignedTaskListPanel getTaskListPanel() {
-        return assignedTaskListPanel;
-    }
+    /**
+     * Navigates to the tab.
+     */
+    private void handleSwitchTab(String param) {
+        SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
 
-    public CustomerListPanel getCustomerListPanel() {
-        return customerListPanel;
+        if (param.equalsIgnoreCase(HOME_TAB)) {
+            selectionModel.select(0);
+        } else if (param.equalsIgnoreCase(HISTORY_TAB)) {
+            selectionModel.select(1);
+        }
     }
 
     /**
@@ -213,6 +240,10 @@ public class MainWindow extends UiPart<Stage> {
 
             if (commandResult.isExit()) {
                 handleExit();
+            }
+
+            if (commandResult.isSwitchTab()) {
+                handleSwitchTab(commandResult.getTabType());
             }
 
             return commandResult;

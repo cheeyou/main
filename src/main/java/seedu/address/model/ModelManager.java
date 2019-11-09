@@ -1,25 +1,34 @@
 package seedu.address.model;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.commons.core.Messages.MESSAGE_NO_ASSIGNED_TASK_FOR_THE_DATE;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.id.IdManager;
 import seedu.address.model.legacy.AddressBook;
 import seedu.address.model.legacy.ReadOnlyAddressBook;
+import seedu.address.model.pdfmanager.PdfCreator;
+import seedu.address.model.pdfmanager.exceptions.PdfNoTaskToDisplayException;
 import seedu.address.model.person.Customer;
 import seedu.address.model.person.Driver;
 import seedu.address.model.person.Person;
 import seedu.address.model.task.Task;
 import seedu.address.model.task.TaskList;
 import seedu.address.model.task.TaskManager;
+import seedu.address.model.task.TaskStatus;
 import seedu.address.model.task.VersionedTaskManager;
 import seedu.address.storage.CentralManager;
 
@@ -27,6 +36,7 @@ import seedu.address.storage.CentralManager;
  * Represents the in-memory model of the address book data.
  */
 public class ModelManager implements Model {
+
     private static final Logger logger = LogsCenter.getLogger(ModelManager.class);
 
     private final AddressBook addressBook;
@@ -34,6 +44,7 @@ public class ModelManager implements Model {
     private final FilteredList<Person> filteredPersons;
     private final FilteredList<Task> filteredTasks;
     private final FilteredList<Task> unassignedTasks;
+    private final FilteredList<Task> completedTasks;
 
     private FilteredList<Customer> filteredCustomers;
     private FilteredList<Driver> filteredDrivers;
@@ -62,6 +73,7 @@ public class ModelManager implements Model {
         filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
         filteredTasks = new FilteredList<>(this.taskManager.getList());
         unassignedTasks = new FilteredList<>(this.taskManager.getList());
+        completedTasks = new FilteredList<>(this.taskManager.getList());
         filteredCustomers = new FilteredList<>(this.customerManager.getCustomerList());
         filteredDrivers = new FilteredList<>(this.driverManager.getDriverList());
     }
@@ -87,6 +99,7 @@ public class ModelManager implements Model {
         filteredDrivers = new FilteredList<>(driverManager.getDriverList());
         filteredTasks = new FilteredList<>(taskManager.getList());
         unassignedTasks = new FilteredList<>(taskManager.getList());
+        completedTasks = new FilteredList<>(taskManager.getList());
 
         TaskManager initialTaskManager = new TaskManager();
         initialTaskManager.setTaskList(this.getTaskManager().getTaskList());
@@ -266,7 +279,6 @@ public class ModelManager implements Model {
         return customerManager.getCustomer(customerId);
     }
 
-
     /**
      * Adds Customer into customer list. Records the last unique customer id created in {@link IdManager}.
      */
@@ -294,10 +306,6 @@ public class ModelManager implements Model {
 
     public void setDriver(Driver driverToEdit, Driver editedDriver) {
         driverManager.setPerson(driverToEdit, editedDriver);
-    }
-    @Override
-    public void viewDriverTask(Person driverToView) {
-
     }
 
     public Driver getDriver(int driverId) {
@@ -334,11 +342,74 @@ public class ModelManager implements Model {
         return idManager;
     }
 
+    public boolean isStartAfresh() {
+        return idManager.isStartAfresh();
+    }
+
+    // ========= PdfCreator =========================================================================
+
+    /**
+     * Saves drivers' tasks for a specified date in PDF format.
+     *
+     * @param filePath directory to save the PDF file.
+     * @param dateOfDelivery date of delivery.
+     * @throws IOException if directory is not found.
+     * @throws PdfNoTaskToDisplayException if there is no assigned task on the day.
+     */
+    public void saveDriverTaskPdf(String filePath, LocalDate dateOfDelivery)
+            throws IOException, PdfNoTaskToDisplayException {
+        requireAllNonNull(filePath, dateOfDelivery);
+
+        List<Task> assignedTaskOnDateList = getOnlyAssignedTaskOnDate(taskManager.getList(), dateOfDelivery);
+        List<Task> sortedByEventTimeTasks = getSortedByEventTimeTasks(assignedTaskOnDateList);
+
+        if (assignedTaskOnDateList.size() == 0) {
+            throw new PdfNoTaskToDisplayException(String.format(MESSAGE_NO_ASSIGNED_TASK_FOR_THE_DATE, dateOfDelivery));
+        }
+
+        List<Driver> drivers = getDriversFromTasks(assignedTaskOnDateList);
+        List<Driver> sortedByNameDrivers = getSortedByNameDrivers(drivers);
+
+        PdfCreator pdfCreator = new PdfCreator(filePath);
+        pdfCreator.saveDriverTaskPdf(sortedByEventTimeTasks, sortedByNameDrivers, dateOfDelivery);
+    }
+
+    public List<Task> getOnlyAssignedTaskOnDate(List<Task> tasks, LocalDate dateOfDelivery) {
+        Predicate<Task> assignedTaskOnDatePredicate = task -> task.getDate().equals(dateOfDelivery)
+                && !task.getStatus().equals(TaskStatus.INCOMPLETE);
+        List<Task> assignedTaskOnDateList = TaskManager.getFilteredList(tasks, assignedTaskOnDatePredicate);
+
+        return assignedTaskOnDateList;
+    }
+
+    public List<Task> getSortedByEventTimeTasks(List<Task> tasks) {
+        Comparator<Task> ascendingEventTimeComparator = Comparator.comparing(t -> {
+            //uses filtered assigned tasks, so eventTime must be present
+            assert t.getEventTime().isPresent();
+            return t.getEventTime().get();
+        });
+
+        List<Task> sortedList = TaskManager.getSortedList(tasks, ascendingEventTimeComparator);
+
+        return sortedList;
+    }
+
+    public List<Driver> getDriversFromTasks(List<Task> tasks) {
+        return TaskManager.getDriversFromTasks(tasks);
+    }
+
+    public List<Driver> getSortedByNameDrivers(List<Driver> drivers) {
+        Comparator<Driver> sortByNameComparator = Comparator.comparing(driver -> driver.getName().toString());
+        List<Driver> sortedByNameDrivers = DriverManager.getSortedDriverList(drivers, sortByNameComparator);
+
+        return sortedByNameDrivers;
+    }
+
     // =========== Filtered Person List Accessors =============================================================
 
     /**
      * Returns an unmodifiable view of the list of {@code Person} backed by the
-     * internal list of {@code versionedAddressBook}
+     * internal list of {@code versionedAddressBook}.
      */
     @Override
     public ObservableList<Person> getFilteredPersonList() {
@@ -377,13 +448,16 @@ public class ModelManager implements Model {
 
     /**
      * Returns an unmodifiable view of the list of {@code Task} backed by the
-     * internal list of {@code versionedAddressBook}
+     * internal list of {@code versionedAddressBook}.
      */
     @Override
     public ObservableList<Task> getFilteredTaskList() {
         return filteredTasks;
     }
 
+    /**
+     * Updates the observable view of the filtered task list to the predicate.
+     */
     @Override
     public void updateFilteredTaskList(Predicate<Task> predicate, FilteredList<Task> list) {
         requireNonNull(predicate);
@@ -404,7 +478,7 @@ public class ModelManager implements Model {
     }
 
     /**
-     * Returns an observable view of the list of that is filtered to unassigned tasks
+     * Returns an observable view of the list of that is filtered to unassigned tasks.
      */
     @Override
     public ObservableList<Task> getUnassignedTaskList() {
@@ -413,7 +487,7 @@ public class ModelManager implements Model {
     }
 
     /**
-     * Returns an observable view of the list of that is filtered to assigned tasks
+     * Returns an observable view of the list of that is filtered to assigned tasks.
      */
     @Override
     public ObservableList<Task> getAssignedTaskList() {
@@ -421,11 +495,93 @@ public class ModelManager implements Model {
         return filteredTasks;
     }
 
+    /**
+     * Returns an observable view of the list of that is filtered to completed tasks.
+     */
+    @Override
+    public ObservableList<Task> getCompletedTaskList() {
+        updateFilteredTaskList(PREDICATE_SHOW_COMPLETED, completedTasks);
+        return completedTasks;
+    }
+
+    /**
+     * Returns an observable view of the current completed task list.
+     */
+    @Override
+    public ObservableList<Task> getCurrentCompletedTaskList() {
+        return completedTasks;
+    }
+
+    /**
+     * Updates the observable view of the completed tasks to the predicate.
+     */
+    @Override
+    public void updateCompletedTaskList(Predicate<Task> predicate) {
+        requireNonNull(predicate);
+        completedTasks.setPredicate(predicate);
+    }
+
+    /**
+     * Updates the observable view of the completed tasks according to the specified customer ID only.
+     * @param customerId customer ID.
+     */
+    @Override
+    public void viewCustomerTask(int customerId) {
+        updateCompletedTaskList(task -> task.getCustomer().getId() == customerId
+                                && task.getStatus().equals(TaskStatus.COMPLETED));
+    }
+
+    /**
+     * Updates the observable view of the completed tasks according to the specified driver ID only.
+     * @param driverId customer ID.
+     */
+    @Override
+    public void viewDriverTask(int driverId) {
+        updateCompletedTaskList(task ->task.getStatus().equals(TaskStatus.COMPLETED)
+                && task.getDriver().get().getId() == driverId);
+    }
+
+    /**
+     * Returns a observable view of the list of incomplete tasks from the previous days
+     */
+    @Override
+    public ObservableList<Task> getIncompleteTaskList() {
+        FilteredList<Task> incompleteTasks = new FilteredList<>(this.taskManager.getList());
+        updateFilteredTaskList(PREDICATE_SHOW_ASSIGNED.and(PREDICATE_SHOW_PREVIOUS_DAYS), incompleteTasks);
+        return incompleteTasks;
+    }
+
+    /**
+     * Refreshes the display of task list.
+     */
+    @Override
+    public void refreshFilteredTaskList() {
+        //refresh assigned task list
+        updateFilteredTaskList(PREDICATE_SHOW_EMPTY_TASKS, filteredTasks);
+        getAssignedTaskList();
+
+        //refresh unassigned task list
+        updateFilteredTaskList(PREDICATE_SHOW_EMPTY_TASKS, unassignedTasks);
+        getUnassignedTaskList();
+
+        updateCompletedTaskList(PREDICATE_SHOW_EMPTY_TASKS);
+        getCompletedTaskList();
+    }
+
+    /**
+     * Refreshes unassigned task list, assigned task list, customer list and driver list.
+     */
+    public void refreshAllFilteredList() {
+        refreshFilteredCustomerList();
+        refreshFilteredDriverList();
+        refreshFilteredTaskList();
+    }
+
     // =========== Filtered Customer List Accessors =============================================================
 
     /**
      * Returns an unmodifiable view of the list of {@code Person} backed by the
-     * internal list of {@code versionedAddressBook}
+     * internal list of {@code versionedAddressBook}.
      */
     @Override
     public ObservableList<Customer> getFilteredCustomerList() {
@@ -436,6 +592,14 @@ public class ModelManager implements Model {
     public void updateFilteredCustomerList(Predicate<Person> predicate) {
         requireNonNull(predicate);
         filteredCustomers.setPredicate(predicate);
+    }
+
+    /**
+     * Refreshes the display of customer list.
+     */
+    public void refreshFilteredCustomerList() {
+        updateFilteredCustomerList(PREDICATE_SHOW_EMPTY_CUSTOMERS);
+        updateFilteredCustomerList(PREDICATE_SHOW_ALL_CUSTOMERS);
     }
 
     // =========== Filtered Driver List Accessors =============================================================
@@ -449,6 +613,14 @@ public class ModelManager implements Model {
     public void updateFilteredDriverList(Predicate<Person> predicate) {
         requireNonNull(predicate);
         filteredDrivers.setPredicate(predicate);
+    }
+
+    /**
+     * Refreshes the display of driver list.
+     */
+    public void refreshFilteredDriverList() {
+        updateFilteredDriverList(PREDICATE_SHOW_EMPTY_DRIVERS);
+        updateFilteredDriverList(PREDICATE_SHOW_ALL_DRIVERS);
     }
 
     // =========== Methods for undo and redo ==================================================================

@@ -45,11 +45,26 @@ public interface Logic {
     /** Returns an unmodifiable view of the filtered list of assigned task list */
     ObservableList<Task> getFilteredAssignedTaskList();
 
+    /** Returns an unmodifiable view of the filtered list of unassigned task list */
+    ObservableList<Task> getFilteredCompletedTaskList();
+
     /** Returns an unmodifiable view of the filtered list of drivers*/
     ObservableList<Driver> getFilteredDriverList();
 
     /** Returns an unmodifiable view of the filtered list of customers */
     ObservableList<Customer> getFilteredCustomerList();
+
+    boolean isStartAfresh();
+
+    /**
+     * Returns a list of incomplete tasks from previous days
+     */
+    ObservableList<Task> getIncompleteTaskList();
+
+    /**
+     * Refreshes filtered lists
+     */
+    void refreshFilteredTaskList();
 
     /**
      * Returns the user prefs' address book file path.

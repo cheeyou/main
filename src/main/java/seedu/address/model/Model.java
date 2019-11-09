@@ -1,14 +1,18 @@
 package seedu.address.model;
 
+import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
 
 import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
+import seedu.address.logic.GlobalClock;
 import seedu.address.model.id.IdManager;
 import seedu.address.model.legacy.ReadOnlyAddressBook;
+import seedu.address.model.pdfmanager.exceptions.PdfNoTaskToDisplayException;
 import seedu.address.model.person.Customer;
 import seedu.address.model.person.Driver;
 import seedu.address.model.person.Person;
@@ -24,6 +28,15 @@ public interface Model {
      * {@code Predicate} that always evaluate to true
      */
     Predicate<Person> PREDICATE_SHOW_ALL_PERSONS = unused -> true;
+    Predicate<Person> PREDICATE_SHOW_ALL_CUSTOMERS = unused -> true;
+    Predicate<Person> PREDICATE_SHOW_ALL_DRIVERS = unused -> true;
+
+    /**
+     * {@code Predicate} that always evaluate to false
+     */
+    Predicate<Task> PREDICATE_SHOW_EMPTY_TASKS = unused -> false;
+    Predicate<Person> PREDICATE_SHOW_EMPTY_CUSTOMERS = unused -> false;
+    Predicate<Person> PREDICATE_SHOW_EMPTY_DRIVERS = unused -> false;
 
     /**
      * {@code Predicate} that filters the task to incomplete status
@@ -34,6 +47,16 @@ public interface Model {
      * {@code Predicate} that filters the task to on-going status
      */
     Predicate<Task> PREDICATE_SHOW_ASSIGNED = task -> task.getStatus().equals(TaskStatus.ON_GOING);
+
+    /**
+     * {@code Predicate} that filters the task to completed status
+     */
+    Predicate<Task> PREDICATE_SHOW_COMPLETED = task -> task.getStatus().equals(TaskStatus.COMPLETED);
+
+    /**
+     * {@code Predicate} that filters the task to both incomplete and ongoing status
+     */
+    Predicate<Task> PREDICATE_SHOW_PREVIOUS_DAYS = task -> task.getDate().isBefore(GlobalClock.dateToday());
 
     /**
      * Returns the user prefs.
@@ -152,6 +175,21 @@ public interface Model {
      */
     ObservableList<Task> getAssignedTaskList();
 
+    /**
+     * Return a list of incomplete tasks from the previous days
+     */
+    ObservableList<Task> getIncompleteTaskList();
+
+    /**
+     * Returns an unmodifiable view of the completed assigned task list.
+     */
+    ObservableList<Task> getCompletedTaskList();
+
+    /**
+     * Returns an unmodifiable view of the current completed assigned task list.
+     */
+    ObservableList<Task> getCurrentCompletedTaskList();
+
     // customer manager
 
     CustomerManager getCustomerManager();
@@ -162,7 +200,9 @@ public interface Model {
 
     Customer getCustomer(int customerId);
 
-    void viewDriverTask(Person driverToView);
+    void viewCustomerTask(int customerId);
+
+    void viewDriverTask(int driverId);
 
     void setCustomer(Customer customerToEdit, Customer editedTask);
 
@@ -202,6 +242,18 @@ public interface Model {
 
     void updateFilteredTaskList(Predicate<Task> predicate);
 
+    void refreshFilteredTaskList();
+
+    void refreshAllFilteredList();
+
+    /**
+     * Updates the filter of the completed filtered task list to filter by the given
+     * {@code predicate}.
+     *
+     * @throws NullPointerException if {@code predicate} is null.
+     */
+    void updateCompletedTaskList(Predicate<Task> predicate);
+
     /**
      * Returns an unmodifiable view of the filtered customer list.
      */
@@ -217,10 +269,14 @@ public interface Model {
 
     void updateFilteredDriverList(Predicate<Person> predicate);
 
+    void refreshFilteredCustomerList();
+
     /**
      * Returns an unmodifiable view of the filtered driver list.
      */
     ObservableList<Driver> getFilteredDriverList();
+
+    void refreshFilteredDriverList();
 
     int getNextTaskId();
 
@@ -229,6 +285,11 @@ public interface Model {
     int getNextDriverId();
 
     IdManager getIdManager();
+
+    boolean isStartAfresh();
+
+    void saveDriverTaskPdf(String filePathForPdf, LocalDate date) throws IOException, PdfNoTaskToDisplayException;
+
 
     void commitTaskManager();
 

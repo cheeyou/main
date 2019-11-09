@@ -12,7 +12,8 @@ public class ListCommand extends Command {
 
     public static final String COMMAND_WORD = "list";
 
-    public static final String MESSAGE_SUCCESS = "Resets all the Task's / Driver's / Customer's list to original view.";
+    public static final String MESSAGE_SUCCESS = "Returned all the Task's / Driver's / Customer's list "
+            + "to its original view.";
 
 
     @Override
@@ -24,6 +25,7 @@ public class ListCommand extends Command {
         //reset any predicate that driver list has
         model.updateFilteredDriverList(PREDICATE_SHOW_ALL_PERSONS);
         //reset any predicate that assigned and unassigned task list has
+        model.refreshAllFilteredList();
         model.getUnassignedTaskList();
         model.updateAssignedTaskList();
         model.getAssignedTaskList();
