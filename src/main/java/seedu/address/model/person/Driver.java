@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import seedu.address.model.EventTime;
+import seedu.address.model.person.exceptions.RatingException;
 import seedu.address.model.person.exceptions.SchedulingException;
 import seedu.address.model.tag.Tag;
 
@@ -23,6 +24,7 @@ public class Driver extends Person {
 
     //data fields
     private Schedule schedule;
+    private DriverRating driverRating;
 
     /**
      * Every field must be present and not null.
@@ -31,6 +33,7 @@ public class Driver extends Person {
         super(name, phone, email, address, tags);
         schedule = new Schedule();
         this.id = id;
+        this.driverRating = new DriverRating();
     }
 
     /**
@@ -55,6 +58,28 @@ public class Driver extends Person {
 
     private void setSchedule(Schedule schedule) {
         this.schedule = schedule;
+    }
+
+    public int getRating() {
+        return this.driverRating.getRating();
+    }
+
+    public int getTotalNoOfReviews() {
+        return this.driverRating.getTotalNoOfReviews();
+    }
+
+    /**
+     * {@see DriverRating#addRating}
+     */
+    public void addRating(int rating) {
+        if (!driverRating.isValid(rating)) {
+            throw new RatingException(driverRating.RATING_OUT_OF_RANGE);
+        }
+        driverRating.addRating(rating);
+    }
+
+    public void setRating(int rating, int totalNoOfReviews) {
+        driverRating.setRating(rating, totalNoOfReviews);
     }
 
     /**
@@ -129,6 +154,9 @@ public class Driver extends Person {
         driverBuilder.append(" Driver stats: \n")
                 .append(" id: ")
                 .append(getId())
+                .append(" rating: ")
+                .append(getRating())
+                .append(" ")
                 .append(super.toString());
         return driverBuilder.toString();
     }
