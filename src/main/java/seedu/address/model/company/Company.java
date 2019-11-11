@@ -52,6 +52,11 @@ public class Company {
         this.gstRegistrationNumber = gstRegistrationNumber;
     }
 
+    /**
+     * Deep copies a Company.
+     *
+     * @return deep-copied Company.
+     */
     public Company deepCopyCompany() {
         Name name = new Name(this.getName().fullName);
         Address address = new Address(this.getAddress().value);
@@ -61,7 +66,7 @@ public class Company {
         RegistrationNumber registrationNumber = new RegistrationNumber(this.getRegistrationNumber()
                 .getRegistrationNumber());
         Optional<GstRegistrationNumber> gstRegistrationNumber;
-        if(this.getGstRegistrationNumber().isPresent()) {
+        if (this.getGstRegistrationNumber().isPresent()) {
             gstRegistrationNumber = Optional.of(this.getGstRegistrationNumber().get());
         } else {
             gstRegistrationNumber = Optional.empty();
