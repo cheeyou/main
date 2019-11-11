@@ -42,7 +42,7 @@ public class Driver extends Person {
      * @return deep-copied (@code Driver)
      */
     public Driver deepCopyDriver() {
-        Driver deepCopyDriver = new Driver(this.id, this.getName(), this.getPhone(), this.getEmail(),
+        Driver deepCopyDriver = new Driver(this.getId(), this.getName(), this.getPhone(), this.getEmail(),
                 this.getAddress(), this.getTags());
         deepCopyDriver.setSchedule(this.schedule.deepCopySchedule());
         return deepCopyDriver;

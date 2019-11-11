@@ -71,11 +71,11 @@ public class AddCustomerCommand extends Command {
             throw new CommandException(String.format(MESSAGE_DUPLICATE_PERSON));
         }
 
-        if (model.shouldTruncateManagers()) {
-            model.truncateManagers();
+        if (model.shouldTruncateCentralManager()) {
+            model.truncateCentralManager();
         }
         model.addCustomer(customerToAdd);
-        model.commitManagers();
+        model.commitCentralManager();
 
         return new CommandResult(String.format(MESSAGE_SUCCESS, customerToAdd));
     }

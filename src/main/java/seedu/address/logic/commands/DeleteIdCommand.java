@@ -63,11 +63,11 @@ public class DeleteIdCommand extends Command {
                 assert isDeleteSuccess;
             }
 
-            if (model.shouldTruncateManagers()) {
-                model.truncateManagers();
+            if (model.shouldTruncateCentralManager()) {
+                model.truncateCentralManager();
             }
             model.deleteTask(taskToDelete);
-            model.commitManagers();
+            model.commitCentralManager();
 
             return new CommandResult(String.format(MESSAGE_DELETE_PERSON_SUCCESS, className, taskToDelete));
         } else if (className.equals(Customer.class.getSimpleName())) {
@@ -83,11 +83,11 @@ public class DeleteIdCommand extends Command {
                 throw new CommandException(String.format(MESSAGE_CANNOT_DELETE_IF_ALLOCATED, className));
             }
 
-            if (model.shouldTruncateManagers()) {
-                model.truncateManagers();
+            if (model.shouldTruncateCentralManager()) {
+                model.truncateCentralManager();
             }
             model.deleteCustomer(customerToDelete);
-            model.commitManagers();
+            model.commitCentralManager();
 
             return new CommandResult(String.format(MESSAGE_DELETE_PERSON_SUCCESS, className, customerToDelete));
         } else {
@@ -103,11 +103,11 @@ public class DeleteIdCommand extends Command {
                 throw new CommandException(String.format(MESSAGE_CANNOT_DELETE_IF_ALLOCATED, className));
             }
 
-            if (model.shouldTruncateManagers()) {
-                model.truncateManagers();
+            if (model.shouldTruncateCentralManager()) {
+                model.truncateCentralManager();
             }
             model.deleteDriver(driverToDelete);
-            model.commitManagers();
+            model.commitCentralManager();
 
             return new CommandResult(String.format(MESSAGE_DELETE_PERSON_SUCCESS, className, driverToDelete));
         }

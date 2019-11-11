@@ -61,7 +61,7 @@ public class Task {
         } else {
             deepCopyTask.setEventTime(Optional.empty());
         }
-        deepCopyTask.deepCopyStatus(this.status);
+        deepCopyTask.deepCopyStatus(this.getStatus());
         return deepCopyTask;
     }
 
@@ -143,6 +143,10 @@ public class Task {
             setStatus(TaskStatus.INCOMPLETE);
         }
 
+        this.driver = driver;
+    }
+
+    public void shallowCopyDriver(Optional<Driver> driver) {
         this.driver = driver;
     }
 

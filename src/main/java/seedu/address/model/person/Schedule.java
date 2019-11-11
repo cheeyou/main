@@ -54,8 +54,8 @@ public class Schedule {
     public Schedule deepCopySchedule() {
         Schedule deepCopySchedule = new Schedule();
         for (EventTime eventTime : this.schedule) {
-            if (!(eventTime.equals(EventTime.parse("0000", START_WORK_TIME))
-                    || eventTime.equals(EventTime.parse(END_WORK_TIME, "2359")))) {
+            if ((!eventTime.equals(EventTime.parse("0000", START_WORK_TIME)))
+                    || (!eventTime.equals(EventTime.parse(END_WORK_TIME, "2359")))) {
                 deepCopySchedule.schedule.add(eventTime.deepCopyEventTime());
             }
         }

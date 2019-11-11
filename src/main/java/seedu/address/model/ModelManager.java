@@ -30,8 +30,8 @@ import seedu.address.model.task.Task;
 import seedu.address.model.task.TaskList;
 import seedu.address.model.task.TaskManager;
 import seedu.address.model.task.TaskStatus;
-import seedu.address.model.task.VersionedTaskManager;
 import seedu.address.storage.CentralManager;
+import seedu.address.storage.VersionedCentralManager;
 
 /**
  * Represents the in-memory model of the address book data.
@@ -103,14 +103,17 @@ public class ModelManager implements Model {
         completedTasks = new FilteredList<>(taskManager.getList());
 
         TaskManager initialTaskManager = new TaskManager();
-        initialTaskManager.setTaskList(this.getTaskManager().getTaskList());
         CustomerManager initialCustomerManager = new CustomerManager();
-        initialCustomerManager.setPersons(this.getCustomerManager().getCustomerList());
+        initialCustomerManager.setPersons(this.getCustomerManager().getDeepCopyCustomerList());
         DriverManager initialDriverManager = new DriverManager();
-        initialDriverManager.setPersons(this.getDriverManager().getDriverList());
-        new VersionedTaskManager(initialTaskManager);
-        new VersionedCustomerManager(initialCustomerManager);
-        new VersionedDriverManager(initialDriverManager);
+        initialDriverManager.setPersons(this.getDriverManager().getDeepCopyDriverList());
+        initialTaskManager.setTaskList(this.getTaskManager().getDeepCopyTaskList(initialDriverManager));
+        IdManager initialIdManager = new IdManager(idManager.getLastTaskId(), idManager.getLastCustomerId(),
+                idManager.getLastDriverId());
+
+        CentralManager initialCentralManager = new CentralManager(initialCustomerManager, initialDriverManager,
+                initialTaskManager, initialIdManager);
+        new VersionedCentralManager(initialCentralManager);
 
         ArrayList<CustomerManager> temp = new ArrayList<>();
         temp.add(new CustomerManager());
@@ -630,174 +633,83 @@ public class ModelManager implements Model {
     // =========== Methods for undo and redo ==================================================================
 
     /**
-     * Commits the latest version of (@code TaskManager) to the (@code VersionedTaskManager).
+     * Commits the latest version of (@code CentralManager) to the (@code VersionedCentralManager).
      */
-    public void commitTaskManager() {
-        TaskManager latestVersion = new TaskManager();
-        latestVersion.setTaskList(this.taskManager.getDeepCopyTaskList());
-        VersionedTaskManager.commit(latestVersion);
+    public void commitCentralManager() {
+        TaskManager latestTaskManagerVersion = new TaskManager();
+        CustomerManager latestCustomerManagerVersion = new CustomerManager();
+        DriverManager latestDriverManagerVersion = new DriverManager();
+        IdManager latestIdManagerVersion = new IdManager(this.idManager.getLastTaskId(),
+                this.idManager.getLastCustomerId(), this.idManager.getLastDriverId());
+
+        latestCustomerManagerVersion.setPersons(this.getCustomerManager().getDeepCopyCustomerList());
+        latestDriverManagerVersion.setPersons(this.getDriverManager().getDeepCopyDriverList());
+        latestTaskManagerVersion.setTaskList(this.taskManager.getDeepCopyTaskList(latestDriverManagerVersion));
+
+        CentralManager latestVersion = new CentralManager(latestCustomerManagerVersion, latestDriverManagerVersion,
+                latestTaskManagerVersion, latestIdManagerVersion);
+        VersionedCentralManager.commit(latestVersion);
     }
 
     /**
-     * Commits the latest version of (@code CustomerManager) to the (@code VersionedCustomerManager).
-     */
-    public void commitCustomerManager() {
-        CustomerManager latestVersion = new CustomerManager();
-        latestVersion.setPersons(this.getCustomerManager().getDeepCopyCustomerList());
-        VersionedCustomerManager.commit(latestVersion);
-    }
-
-    /**
-     * Commits the latest version of (@code DriverManager) to the (@code VersionedDriverManager).
-     */
-    public void commitDriverManager() {
-        DriverManager latestVersion = new DriverManager();
-        latestVersion.setPersons(this.getDriverManager().getDeepCopyDriverList());
-        VersionedDriverManager.commit(latestVersion);
-    }
-
-    /**
-     * Commits all managers.
-     */
-    public void commitManagers() {
-        commitTaskManager();
-        commitCustomerManager();
-        commitDriverManager();
-    }
-
-    /**
-     * Checks whether all the managers can be reverted to a previous state.
+     * Checks whether the (@code CentralManager) can be reverted to a previous state.
      *
-     * @return whether all managers can be reverted to a previous state.
+     * @return whether (@code CentralManager) can be reverted to a previous state.
      */
-    public boolean canUndoManagers() {
-        boolean canUndoTaskManager = (VersionedTaskManager.getCurrentStatePointer() != 0);
-        boolean canUndoCustomerManager = (VersionedCustomerManager.getCurrentStatePointer() != 0);
-        boolean canUndoDriverManager = (VersionedDriverManager.getCurrentStatePointer() != 0);
-        return canUndoTaskManager && canUndoCustomerManager && canUndoDriverManager;
+    public boolean canUndoCentralManager() {
+        return VersionedCentralManager.getCurrentStatePointer() != 0;
     }
 
     /**
-     * Reverts (@code TaskManager) to its previous state.
+     * Reverts (@code CentralManager) to its previous state
      */
-    public void undoTaskManager() {
-        TaskManager previousVersion = VersionedTaskManager.undo();
-        this.taskManager.setTaskList(previousVersion.getTaskList());
+    public void undoCentralManager() {
+        refreshAllFilteredList();
+        CentralManager previousVersion = VersionedCentralManager.undo();
+        this.customerManager.setPersons(previousVersion.getCustomerManager().getDeepCopyCustomerList());
+        this.driverManager.setPersons(previousVersion.getDriverManager().getDeepCopyDriverList());
+        this.taskManager.setTaskList(previousVersion.getTaskManager().getDeepCopyTaskList(driverManager));
+        this.idManager.setLastTaskId(previousVersion.getIdManager().getLastTaskId());
+        this.idManager.setLastCustomerId(previousVersion.getIdManager().getLastCustomerId());
+        this.idManager.setLastDriverId(previousVersion.getIdManager().getLastDriverId());
     }
 
     /**
-     * Reverts (@code CustomerManager) to its previous state.
-     */
-    public void undoCustomerManager() {
-        CustomerManager previousVersion = VersionedCustomerManager.undo();
-        this.customerManager.setPersons(previousVersion.getCustomerList());
-    }
-
-    /**
-     * Reverts (@code DriverManager) to its previous state.
-     */
-    public void undoDriverManager() {
-        DriverManager previousVersion = VersionedDriverManager.undo();
-        this.driverManager.setPersons(previousVersion.getDriverList());
-    }
-
-    /**
-     * Reverts all managers to their previous state.
-     */
-    public void undoManagers() {
-        undoTaskManager();
-        undoCustomerManager();
-        undoDriverManager();
-    }
-
-    /**
-     * Checks whether (@code TaskManager) can go to a next state.
+     * Checks whether (@code CentralManager) can go to a next state.
      *
-     * @return whether (@code TaskManager) can go to a next state.
+     * @return whether (@code CentralManager) can go to a next state.
      */
-    public boolean canRedoTaskManager() {
-        int currentStatePointerIndex = VersionedTaskManager.getCurrentStatePointer();
-        int currentStateListSize = VersionedTaskManager.getTaskManagerStateList().size();
+    public boolean canRedoCentralManager() {
+        int currentStatePointerIndex = VersionedCentralManager.getCurrentStatePointer();
+        int currentStateListSize = VersionedCentralManager.getCentralManagerStateList().size();
         return currentStatePointerIndex != currentStateListSize - 1;
     }
 
     /**
-     * Checks whether (@code CustomerManager) can go to a next state.
-     *
-     * @return whether (@code CustomerManager) can go to a next state.
+     * Reverts (@code CentralManager) to its next state.
      */
-    public boolean canRedoCustomerManager() {
-        int currentStatePointerIndex = VersionedCustomerManager.getCurrentStatePointer();
-        int currentStateListSize = VersionedCustomerManager.getCustomerManagerStateList().size();
-        return currentStatePointerIndex != currentStateListSize - 1;
+    public void redoCentralManager() {
+        refreshAllFilteredList();
+        CentralManager nextVersion = VersionedCentralManager.redo();
+        this.customerManager.setPersons(nextVersion.getCustomerManager().getDeepCopyCustomerList());
+        this.driverManager.setPersons(nextVersion.getDriverManager().getDeepCopyDriverList());
+        this.taskManager.setTaskList(nextVersion.getTaskManager().getDeepCopyTaskList(driverManager));
+        this.idManager.setLastTaskId(nextVersion.getIdManager().getLastTaskId());
+        this.idManager.setLastCustomerId(nextVersion.getIdManager().getLastCustomerId());
+        this.idManager.setLastDriverId(nextVersion.getIdManager().getLastDriverId());
     }
 
     /**
-     * Checks whether (@code DriverManager) can go to a next state.
-     *
-     * @return whether (@code DriverManager) can go to a next state.
+     * Checks whether the versioned list of (@code CentralManager) should be shortened
      */
-    public boolean canRedoDriverManager() {
-        int currentStatePointerIndex = VersionedDriverManager.getCurrentStatePointer();
-        int currentStateListSize = VersionedDriverManager.getDriverManagerStateList().size();
-        return currentStatePointerIndex != currentStateListSize - 1;
+    public boolean shouldTruncateCentralManager() {
+        return !canRedoCentralManager();
     }
 
     /**
-     * Checks whether all managers can go to a next state.
-     *
-     * @return whether all managers can go to a next state.
+     * Shortens the versioned list of (@code CentralManager)
      */
-    public boolean canRedoManagers() {
-        return canRedoTaskManager() && canRedoCustomerManager() && canRedoDriverManager();
-    }
-
-    /**
-     * Reverts (@code TaskManager) to its next state.
-     */
-    public void redoTaskManager() {
-        TaskManager nextVersion = VersionedTaskManager.redo();
-        this.taskManager.setTaskList(nextVersion.getTaskList());
-    }
-
-    /**
-     * Reverts (@code CustomerManager) to its next state.
-     */
-    public void redoCustomerManager() {
-        CustomerManager nextVersion = VersionedCustomerManager.redo();
-        this.customerManager.setPersons(nextVersion.getCustomerList());
-    }
-
-    /**
-     * Reverts (@code DriverManager) to its next state.
-     */
-    public void redoDriverManager() {
-        DriverManager nextVersion = VersionedDriverManager.redo();
-        this.driverManager.setPersons(nextVersion.getDriverList());
-    }
-
-    /**
-     * Reverts all managers to their next state.
-     */
-    public void redoManagers() {
-        redoTaskManager();
-        redoCustomerManager();
-        redoDriverManager();
-    }
-
-    /**
-     * Checks whether the versioned lists of all managers should be shortened
-     */
-    public boolean shouldTruncateManagers() {
-        return !canRedoDriverManager();
-    }
-
-    /**
-     * Shortens the versioned lists of all managers
-     */
-    public void truncateManagers() {
-        VersionedCustomerManager.truncateList();
-        VersionedDriverManager.truncateList();
-        VersionedTaskManager.truncateList();
+    public void truncateCentralManager() {
+        VersionedCentralManager.truncateList();
     }
 }

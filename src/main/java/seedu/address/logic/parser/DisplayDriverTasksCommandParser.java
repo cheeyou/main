@@ -33,6 +33,8 @@ public class DisplayDriverTasksCommandParser implements Parser<DisplayDriverTask
         }
 
         int driverIndex = ParserUtil.parseId(trimmedArgs);
+        assert(driverIndex > 0 && driverIndex < driverList.size());
+
         Driver driver = driverList.get(driverIndex - 1);
         return new DisplayDriverTasksCommand(new DriverIsTheSamePredicate(driver));
     }

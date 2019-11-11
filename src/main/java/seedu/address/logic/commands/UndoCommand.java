@@ -23,10 +23,10 @@ public class UndoCommand extends Command {
     @Override
     public CommandResult execute (Model model) throws CommandException {
         requireNonNull(model);
-        if (!model.canUndoManagers()) {
+        if (!model.canUndoCentralManager()) {
             throw new CommandException(MESSAGE_INVALID_UNDO_REQUEST);
         } else {
-            model.undoManagers();
+            model.undoCentralManager();
             return new CommandResult(MESSAGE_SUCCESS);
         }
     }

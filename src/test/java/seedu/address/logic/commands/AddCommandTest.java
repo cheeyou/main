@@ -409,97 +409,36 @@ public class AddCommandTest {
         }
 
         @Override
-        public void commitTaskManager() {
+        public void commitCentralManager() {
             throw new AssertionError("This method should not be called.");
         }
 
         @Override
-        public void commitCustomerManager() {
+        public boolean canUndoCentralManager() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        public void undoCentralManager() {
             throw new AssertionError("This method should not be called.");
         }
 
         @Override
-        public void commitDriverManager() {
+        public boolean canRedoCentralManager() {
             throw new AssertionError("This method should not be called.");
         }
 
         @Override
-        public void commitManagers() {
+        public void redoCentralManager() {
             throw new AssertionError("This method should not be called.");
         }
 
         @Override
-        public boolean canUndoManagers() {
+        public boolean shouldTruncateCentralManager() {
             throw new AssertionError("This method should not be called.");
         }
 
         @Override
-        public void undoTaskManager() {
-            throw new AssertionError("This method should not be called.");
-        }
-
-        @Override
-        public void undoCustomerManager() {
-            throw new AssertionError("This method should not be called.");
-        }
-
-        @Override
-        public void undoDriverManager() {
-            throw new AssertionError("This method should not be called.");
-        }
-
-        @Override
-        public void undoManagers() {
-            throw new AssertionError("This method should not be called.");
-        }
-
-        @Override
-        public boolean canRedoTaskManager() {
-            throw new AssertionError("This method should not be called.");
-        }
-
-        @Override
-        public boolean canRedoCustomerManager() {
-            throw new AssertionError("This method should not be called.");
-        }
-
-        @Override
-        public boolean canRedoDriverManager() {
-            throw new AssertionError("This method should not be called.");
-        }
-
-        @Override
-        public boolean canRedoManagers() {
-            throw new AssertionError("This method should not be called.");
-        }
-
-        @Override
-        public void redoTaskManager() {
-            throw new AssertionError("This method should not be called.");
-        }
-
-        @Override
-        public void redoCustomerManager() {
-            throw new AssertionError("This method should not be called.");
-        }
-
-        @Override
-        public void redoDriverManager() {
-            throw new AssertionError("This method should not be called.");
-        }
-
-        @Override
-        public void redoManagers() {
-            throw new AssertionError("This method should not be called.");
-        }
-
-        @Override
-        public boolean shouldTruncateManagers() {
-            throw new AssertionError("This method should not be called.");
-        }
-
-        @Override
-        public void truncateManagers() {
+        public void truncateCentralManager() {
             throw new AssertionError("This method should not be called.");
         }
     }

@@ -72,10 +72,10 @@ public class FreeCommand extends Command {
 
         model.refreshAllFilteredList();
 
-        if (model.shouldTruncateManagers()) {
-            model.truncateManagers();
+        if (model.shouldTruncateCentralManager()) {
+            model.truncateCentralManager();
         }
-        model.commitManagers();
+        model.commitCentralManager();
 
         return new CommandResult(String.format(MESSAGE_FREE_SUCCESS, task.getId(), driver.getName().fullName));
     }

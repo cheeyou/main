@@ -175,10 +175,10 @@ public class AssignCommand extends Command {
 
         model.refreshAllFilteredList();
 
-        if (model.shouldTruncateManagers()) {
-            model.truncateManagers();
+        if (model.shouldTruncateCentralManager()) {
+            model.truncateCentralManager();
         }
-        model.commitManagers();
+        model.commitCentralManager();
 
         return new CommandResult(buildSuccessfulResponse(suggestion, task, driver, eventTime));
     }

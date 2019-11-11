@@ -76,10 +76,10 @@ public class SuggestCommand extends Command {
 
         model.refreshAllFilteredList();
 
-        if (model.shouldTruncateManagers()) {
-            model.truncateManagers();
+        if (model.shouldTruncateCentralManager()) {
+            model.truncateCentralManager();
         }
-        model.commitManagers();
+        model.commitCentralManager();
 
         return new CommandResult(buildSuccessfulResponse(result, task));
     }

@@ -2,10 +2,12 @@ package seedu.address.model.task;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
 
+import seedu.address.model.DriverManager;
 import seedu.address.model.person.Driver;
 
 /**
@@ -33,9 +35,17 @@ public class TaskManager {
         return tasks;
     }
 
-    public TaskList getDeepCopyTaskList() {
+    public TaskList getDeepCopyTaskList(DriverManager driverManager) {
         TaskList deepCopyTaskList = new TaskList();
         for (Task task : tasks.getList()) {
+            if (task.getDriver().isPresent()) {
+                for (Driver driver : driverManager.getDriverList()) {
+                    int id = driver.getId();
+                    if (id == task.getDriver().get().getId()) {
+                        task.shallowCopyDriver(Optional.of(driver));
+                    }
+                }
+            }
             deepCopyTaskList.addTask(task.deepCopyTask());
         }
         return deepCopyTaskList;

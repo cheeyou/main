@@ -290,41 +290,17 @@ public interface Model {
 
     void saveDriverTaskPdf(String filePathForPdf, LocalDate date) throws IOException, PdfNoTaskToDisplayException;
 
-    void commitTaskManager();
+    void commitCentralManager();
 
-    void commitCustomerManager();
+    boolean canUndoCentralManager();
 
-    void commitDriverManager();
+    void undoCentralManager();
 
-    void commitManagers();
+    boolean canRedoCentralManager();
 
-    boolean canUndoManagers();
+    void redoCentralManager();
 
-    void undoTaskManager();
+    boolean shouldTruncateCentralManager();
 
-    void undoCustomerManager();
-
-    void undoDriverManager();
-
-    void undoManagers();
-
-    boolean canRedoTaskManager();
-
-    boolean canRedoCustomerManager();
-
-    boolean canRedoDriverManager();
-
-    boolean canRedoManagers();
-
-    void redoTaskManager();
-
-    void redoCustomerManager();
-
-    void redoDriverManager();
-
-    void redoManagers();
-
-    boolean shouldTruncateManagers();
-
-    void truncateManagers();
+    void truncateCentralManager();
 }
