@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 
 import javafx.collections.ObservableList;
+
 import seedu.address.model.person.Person;
 import seedu.address.model.person.UniqueEntityList;
 
@@ -106,6 +107,10 @@ public class EntityManager<T extends Person> implements ReadOnlyEntityManager<T>
     @Override
     public ObservableList<T> getPersonList() {
         return persons.asUnmodifiableObservableList();
+    }
+
+    public UniqueEntityList<T> getPersons() {
+        return persons;
     }
 
     @Override

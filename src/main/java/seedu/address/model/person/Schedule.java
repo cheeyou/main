@@ -46,6 +46,10 @@ public class Schedule {
         schedule.add(afterWorkingHours);
     }
 
+    public NavigableSet<EventTime> getSchedule() {
+        return this.schedule;
+    }
+
 
     public SchedulingSuggestion getSchedulingSuggestion(EventTime eventTime, LocalTime timeNow) {
         Optional<EventTime> suggestedEventTime = findFirstAvailableSlot(timeNow, eventTime.getDuration());

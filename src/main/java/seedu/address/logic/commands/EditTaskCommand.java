@@ -120,7 +120,7 @@ public class EditTaskCommand extends Command {
      * Creates and returns a {@code Person} with the details of {@code personToEdit}
      * edited with {@code editPersonDescriptor}.
      */
-    private static Task createEditedTask(Task taskToEdit, EditTaskDescriptor editTaskDescriptor,
+    public static Task createEditedTask(Task taskToEdit, EditTaskDescriptor editTaskDescriptor,
                                          Model model) throws CommandException {
         assert taskToEdit != null;
 
@@ -163,6 +163,8 @@ public class EditTaskCommand extends Command {
         private Integer driver;
         private Integer customer;
         private EventTime eventTime;
+
+        private TaskStatus status;
 
 
         public EditTaskDescriptor() {
@@ -223,6 +225,5 @@ public class EditTaskCommand extends Command {
         public void setEventTime(EventTime eventTime) {
             this.eventTime = eventTime;
         }
-
     }
 }

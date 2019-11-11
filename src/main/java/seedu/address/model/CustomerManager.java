@@ -1,8 +1,14 @@
 package seedu.address.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import javafx.collections.ObservableList;
 
 import seedu.address.model.person.Customer;
+import seedu.address.model.person.UniqueEntityList;
 import seedu.address.model.person.exceptions.PersonNotFoundException;
 
 /**
@@ -37,6 +43,15 @@ public class CustomerManager extends EntityManager<Customer> {
      */
     public ObservableList<Customer> getCustomerList() {
         return super.getPersonList();
+    }
+
+    public ObservableList<Customer> getDeepCopyCustomerList() {
+        UniqueEntityList<Customer> customers= super.getPersons();
+        UniqueEntityList<Customer> deepCopyCustomers = new UniqueEntityList<>();
+        for(Customer customer: customers) {
+            deepCopyCustomers.add((Customer) deepCopy(customer));
+        }
+        return deepCopyCustomers.asUnmodifiableObservableList();
     }
 
     /**
@@ -75,5 +90,23 @@ public class CustomerManager extends EntityManager<Customer> {
 
         CustomerManager otherObject = (CustomerManager) o;
         return getCustomerList().equals(otherObject.getCustomerList());
+    }
+
+    /**
+     * Makes a deep copy of any Java object that is passed.
+     */
+    private static Object deepCopy(Object object) {
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ObjectOutputStream outputStrm = new ObjectOutputStream(outputStream);
+            outputStrm.writeObject(object);
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+            ObjectInputStream objInputStream = new ObjectInputStream(inputStream);
+            return objInputStream.readObject();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

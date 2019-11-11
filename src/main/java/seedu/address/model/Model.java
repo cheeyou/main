@@ -6,8 +6,8 @@ import java.time.LocalDate;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
-
 import javafx.collections.transformation.FilteredList;
+
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.GlobalClock;
 import seedu.address.model.id.IdManager;
@@ -289,7 +289,6 @@ public interface Model {
     boolean isStartAfresh();
 
     void saveDriverTaskPdf(String filePathForPdf, LocalDate date) throws IOException, PdfNoTaskToDisplayException;
-
 
     void commitTaskManager();
 

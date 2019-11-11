@@ -7,6 +7,7 @@ import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
@@ -110,6 +111,12 @@ public class ModelManager implements Model {
         new VersionedTaskManager(initialTaskManager);
         new VersionedCustomerManager(initialCustomerManager);
         new VersionedDriverManager(initialDriverManager);
+
+        ArrayList<CustomerManager> temp = new ArrayList<>();
+        temp.add(new CustomerManager());
+        temp.add(new CustomerManager());
+        ArrayList<CustomerManager> temp1 = new ArrayList<>();
+        temp1.add(temp.get(1));
     }
 
     public ModelManager() {
@@ -468,9 +475,6 @@ public class ModelManager implements Model {
     public void updateFilteredTaskList(Predicate<Task> predicate) {
         requireNonNull(predicate);
         filteredTasks.setPredicate(predicate);
-        for (Task task : filteredTasks) {
-            System.out.println(task);
-        }
     }
 
     public void updateAssignedTaskList() {
@@ -491,7 +495,7 @@ public class ModelManager implements Model {
      */
     @Override
     public ObservableList<Task> getAssignedTaskList() {
-        updateFilteredTaskList(PREDICATE_SHOW_ASSIGNED, filteredTasks);
+        updateFilteredTaskList(PREDICATE_SHOW_ASSIGNED);
         return filteredTasks;
     }
 
@@ -630,7 +634,7 @@ public class ModelManager implements Model {
      */
     public void commitTaskManager() {
         TaskManager latestVersion = new TaskManager();
-        latestVersion.setTaskList(this.taskManager.getTaskList());
+        latestVersion.setTaskList(this.taskManager.getDeepCopyTaskList(this));
         VersionedTaskManager.commit(latestVersion);
     }
 
@@ -639,7 +643,7 @@ public class ModelManager implements Model {
      */
     public void commitCustomerManager() {
         CustomerManager latestVersion = new CustomerManager();
-        latestVersion.setPersons(this.getCustomerManager().getCustomerList());
+        latestVersion.setPersons(this.getCustomerManager().getDeepCopyCustomerList());
         VersionedCustomerManager.commit(latestVersion);
     }
 
@@ -648,7 +652,7 @@ public class ModelManager implements Model {
      */
     public void commitDriverManager() {
         DriverManager latestVersion = new DriverManager();
-        latestVersion.setPersons(this.getDriverManager().getDriverList());
+        latestVersion.setPersons(this.getDriverManager().getDeepCopyDriverList());
         VersionedDriverManager.commit(latestVersion);
     }
 
@@ -701,6 +705,7 @@ public class ModelManager implements Model {
      * Reverts all managers to their previous state.
      */
     public void undoManagers() {
+        refreshAllFilteredList();
         undoTaskManager();
         undoCustomerManager();
         undoDriverManager();
@@ -776,6 +781,7 @@ public class ModelManager implements Model {
      * Reverts all managers to their next state.
      */
     public void redoManagers() {
+        refreshAllFilteredList();
         redoTaskManager();
         redoCustomerManager();
         redoDriverManager();

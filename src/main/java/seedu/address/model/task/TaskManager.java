@@ -1,10 +1,16 @@
 package seedu.address.model.task;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
+
+import seedu.address.model.Model;
 import seedu.address.model.person.Driver;
 
 /**
@@ -30,6 +36,14 @@ public class TaskManager {
 
     public TaskList getTaskList() {
         return tasks;
+    }
+
+    public TaskList getDeepCopyTaskList(Model model) {
+        TaskList deepCopyTaskList = new TaskList();
+        for(Task task : tasks.getList()) {
+            deepCopyTaskList.addTask((Task) deepCopy(task));
+        }
+        return deepCopyTaskList;
     }
 
     //task list operations
@@ -86,5 +100,23 @@ public class TaskManager {
 
         TaskManager otherObject = (TaskManager) o;
         return getList().equals(otherObject.getList());
+    }
+
+    /**
+     * Makes a deep copy of any Java object that is passed.
+     */
+    private static Object deepCopy(Object object) {
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ObjectOutputStream outputStrm = new ObjectOutputStream(outputStream);
+            outputStrm.writeObject(object);
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+            ObjectInputStream objInputStream = new ObjectInputStream(inputStream);
+            return objInputStream.readObject();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

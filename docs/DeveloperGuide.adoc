@@ -300,11 +300,14 @@ image::GeneratePdfActivityDiagram.png[]
 
 
 // tag::undoredo[]
-=== [Proposed] Undo/Redo feature
-==== Proposed Implementation
+=== Undo/Redo feature
+==== Implementation
 
-The undo/redo mechanism is facilitated by `VersionedAddressBook`.
-It extends `AddressBook` with an undo/redo history, stored internally as an `addressBookStateList` and `currentStatePointer`.
+The undo/redo mechanism is facilitated by `VersionedCustomerManager`, `VersionedDriverManager` and
+`VersionedTaskManager`.
+These extend `CustomerManager`, `DriverManager` and `TaskManager` respectively, each with an undo/redo history,
+stored internally as a `customerManagerStateList`, `driverManagerStateList` and `taskManagerStateList` respectively,
+and a `currentStatePointer`.
 Additionally, it implements the following operations:
 
 * `VersionedAddressBook#commit()` -- Saves the current address book state in its history.
