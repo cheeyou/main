@@ -3,7 +3,6 @@ package seedu.address.model;
 /**
  * Deals with the description of the product to be delivered.
  */
-
 public class Goods {
 
     private Description description;

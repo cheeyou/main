@@ -4,7 +4,7 @@ import static seedu.address.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT
 
 import seedu.address.logic.commands.FindDriverCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.person.NameContainsStringPredicate;
+import seedu.address.model.person.DriverNameContainsStringPredicate;
 
 /**
  * Parses input arguments and creates a new FindDriverCommand object
@@ -23,7 +23,7 @@ public class FindDriverCommandParser implements Parser<FindDriverCommand> {
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindDriverCommand.MESSAGE_USAGE));
         }
 
-        return new FindDriverCommand(new NameContainsStringPredicate(trimmedArgs));
+        return new FindDriverCommand(new DriverNameContainsStringPredicate(trimmedArgs));
     }
 
 }

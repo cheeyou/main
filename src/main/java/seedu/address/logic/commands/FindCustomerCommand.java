@@ -4,7 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import seedu.address.commons.core.Messages;
 import seedu.address.model.Model;
-import seedu.address.model.person.NameContainsStringPredicate;
+import seedu.address.model.person.CustomerNameContainsStringPredicate;
 
 /**
  * Finds and lists all customers in address book whose name contains the phrase.
@@ -19,9 +19,9 @@ public class FindCustomerCommand extends Command {
             + "Parameters: PHRASE [MORE PHRASE]...\n"
             + "Example: " + COMMAND_WORD + " alex ch";
 
-    private final NameContainsStringPredicate predicate;
+    private final CustomerNameContainsStringPredicate predicate;
 
-    public FindCustomerCommand(NameContainsStringPredicate predicate) {
+    public FindCustomerCommand(CustomerNameContainsStringPredicate predicate) {
         this.predicate = predicate;
     }
 

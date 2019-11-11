@@ -78,6 +78,7 @@ public class EditCustomerCommand extends Command {
             model.truncateCentralManager();
         }
         model.setCustomer(customerToEdit, editedCustomer);
+        model.refreshAllFilteredList();
         model.commitCentralManager();
 
         return new CommandResult(String.format(MESSAGE_EDIT_CUSTOMER_SUCCESS, editedCustomer));

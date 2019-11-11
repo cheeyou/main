@@ -25,7 +25,7 @@ public class Schedule {
             "The event cannot happen in the past. The time now is %s. ";
 
     public static final String START_WORK_TIME = "0900";
-    public static final String END_WORK_TIME = "2100";
+    public static final String END_WORK_TIME = "2349";
     private static EventTime workingHours = EventTime.parse(START_WORK_TIME, END_WORK_TIME);
 
     public static final String MESSAGE_OUTSIDE_WORKING_HOURS =

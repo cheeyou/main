@@ -10,6 +10,7 @@ import javafx.collections.transformation.FilteredList;
 
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.GlobalClock;
+import seedu.address.model.company.Company;
 import seedu.address.model.id.IdManager;
 import seedu.address.model.legacy.ReadOnlyAddressBook;
 import seedu.address.model.pdfmanager.exceptions.PdfNoTaskToDisplayException;
@@ -28,15 +29,15 @@ public interface Model {
      * {@code Predicate} that always evaluate to true
      */
     Predicate<Person> PREDICATE_SHOW_ALL_PERSONS = unused -> true;
-    Predicate<Person> PREDICATE_SHOW_ALL_CUSTOMERS = unused -> true;
-    Predicate<Person> PREDICATE_SHOW_ALL_DRIVERS = unused -> true;
+    Predicate<Customer> PREDICATE_SHOW_ALL_CUSTOMERS = unused -> true;
+    Predicate<Driver> PREDICATE_SHOW_ALL_DRIVERS = unused -> true;
 
     /**
      * {@code Predicate} that always evaluate to false
      */
     Predicate<Task> PREDICATE_SHOW_EMPTY_TASKS = unused -> false;
-    Predicate<Person> PREDICATE_SHOW_EMPTY_CUSTOMERS = unused -> false;
-    Predicate<Person> PREDICATE_SHOW_EMPTY_DRIVERS = unused -> false;
+    Predicate<Customer> PREDICATE_SHOW_EMPTY_CUSTOMERS = unused -> false;
+    Predicate<Driver> PREDICATE_SHOW_EMPTY_DRIVERS = unused -> false;
 
     /**
      * {@code Predicate} that filters the task to incomplete status
@@ -265,9 +266,9 @@ public interface Model {
      *
      * @throws NullPointerException if {@code predicate} is null.
      */
-    void updateFilteredCustomerList(Predicate<Person> predicate);
+    void updateFilteredCustomerList(Predicate<Customer> predicate);
 
-    void updateFilteredDriverList(Predicate<Person> predicate);
+    void updateFilteredDriverList(Predicate<Driver> predicate);
 
     void refreshFilteredCustomerList();
 
@@ -288,7 +289,25 @@ public interface Model {
 
     boolean isStartAfresh();
 
-    void saveDriverTaskPdf(String filePathForPdf, LocalDate date) throws IOException, PdfNoTaskToDisplayException;
+    void generateTaskSummaryPdf(String filePathForPdf, LocalDate date) throws IOException, PdfNoTaskToDisplayException;
+
+    void generateDeliveryOrderPdf(String filePathForPdf, LocalDate date) throws IOException,
+            PdfNoTaskToDisplayException;
+
+    Company getCompany();
+
+    void setCompany(Company updatedCompany);
+    // command history
+
+    /**
+     * Adds command to the command list
+     */
+    void addCommand(String command);
+
+    /**
+     * Returns the unmodifiable view of the command list
+     */
+    ObservableList<String> getFilteredCommandList();
 
     void commitCentralManager();
 

@@ -79,6 +79,7 @@ public class EditDriverCommand extends Command {
             model.truncateCentralManager();
         }
         model.setDriver(driverToEdit, editedDriver);
+        model.refreshAllFilteredList();
         model.commitCentralManager();
 
         return new CommandResult(String.format(MESSAGE_EDIT_DRIVER_SUCCESS, editedDriver));
