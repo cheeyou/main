@@ -157,7 +157,7 @@ public class AssignCommand extends Command {
                 || task.getDriver().isPresent() || task.getEventTime().isPresent();
 
         if (isAlreadyAssigned) {
-            resetTaskIfForced(task);
+            resetTaskIfForced(driver, task);
         }
 
         assertTimeIsNotPast(eventTime);
@@ -189,9 +189,9 @@ public class AssignCommand extends Command {
      * @param task the task to reset, if needed
      * @throws CommandException when the forced flag is not turned on
      */
-    public void resetTaskIfForced(Task task) throws CommandException {
+    public void resetTaskIfForced(Driver driver, Task task) throws CommandException {
         if (isForceAssign) {
-            FreeCommand.freeDriverFromTask(task.getDriver().get(), task);
+            FreeCommand.freeDriverFromTask(driver, task);
         } else {
             throw new CommandException(MESSAGE_ALREADY_ASSIGNED + MESSAGE_PROMPT_FORCE);
         }
