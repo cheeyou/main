@@ -634,7 +634,7 @@ public class ModelManager implements Model {
      */
     public void commitTaskManager() {
         TaskManager latestVersion = new TaskManager();
-        latestVersion.setTaskList(this.taskManager.getDeepCopyTaskList(this));
+        latestVersion.setTaskList(this.taskManager.getDeepCopyTaskList());
         VersionedTaskManager.commit(latestVersion);
     }
 
@@ -705,7 +705,6 @@ public class ModelManager implements Model {
      * Reverts all managers to their previous state.
      */
     public void undoManagers() {
-        refreshAllFilteredList();
         undoTaskManager();
         undoCustomerManager();
         undoDriverManager();
@@ -781,7 +780,6 @@ public class ModelManager implements Model {
      * Reverts all managers to their next state.
      */
     public void redoManagers() {
-        refreshAllFilteredList();
         redoTaskManager();
         redoCustomerManager();
         redoDriverManager();

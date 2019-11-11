@@ -76,11 +76,6 @@ public class SuggestCommand extends Command {
 
         model.refreshAllFilteredList();
 
-        if (model.shouldTruncateManagers()) {
-            model.truncateManagers();
-        }
-        model.commitManagers();
-
         return new CommandResult(buildSuccessfulResponse(result, task));
     }
 

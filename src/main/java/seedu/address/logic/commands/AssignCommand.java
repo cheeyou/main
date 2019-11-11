@@ -153,8 +153,8 @@ public class AssignCommand extends Command {
         // saving the state of event time
         Optional<EventTime> existingEventTime = task.getEventTime();
 
-        boolean isAlreadyAssigned = task.getStatus() != TaskStatus.INCOMPLETE || task.getDriver().isPresent()
-                || task.getEventTime().isPresent();
+        boolean isAlreadyAssigned = task.getStatus() != TaskStatus.INCOMPLETE
+                || task.getDriver().isPresent() || task.getEventTime().isPresent();
 
         if (isAlreadyAssigned) {
             resetTaskIfForced(task);
@@ -173,12 +173,12 @@ public class AssignCommand extends Command {
 
         forceAssign(driver, task, eventTime);
 
+        model.refreshAllFilteredList();
+
         if (model.shouldTruncateManagers()) {
             model.truncateManagers();
         }
         model.commitManagers();
-
-        model.refreshAllFilteredList();
 
         return new CommandResult(buildSuccessfulResponse(suggestion, task, driver, eventTime));
     }
@@ -211,8 +211,6 @@ public class AssignCommand extends Command {
                 && taskId == that.taskId
                 && Objects.equals(eventTime, that.eventTime);
     }
-
-
 
     @Override
     public int hashCode() {

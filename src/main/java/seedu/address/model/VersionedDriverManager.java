@@ -40,6 +40,7 @@ public class VersionedDriverManager extends DriverManager {
      */
     public static void commit(DriverManager driverManager) {
         currentStatePointer++;
+        System.out.println(currentStatePointer);
         driverManagerStateList.add(currentStatePointer, driverManager);
     }
 

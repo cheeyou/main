@@ -88,7 +88,7 @@ public class EditDriverCommand extends Command {
      * Creates and returns a {@code Driver} with the details of {@code driverToEdit}
      * edited with {@code editDriverDescriptor}.
      */
-    public static Driver createEditedDriver(Driver driverToEdit, EditDriverDescriptor editDriverDescriptor) {
+    private static Driver createEditedDriver(Driver driverToEdit, EditDriverDescriptor editDriverDescriptor) {
         assert driverToEdit != null;
 
         Name updatedName = editDriverDescriptor.getName().orElse(driverToEdit.getName());

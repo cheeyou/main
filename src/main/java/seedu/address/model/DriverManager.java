@@ -1,9 +1,5 @@
 package seedu.address.model;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -60,10 +56,10 @@ public class DriverManager extends EntityManager<Driver> {
     }
 
     public ObservableList<Driver> getDeepCopyDriverList() {
-        UniqueEntityList<Driver> drivers= super.getPersons();
+        UniqueEntityList<Driver> drivers = super.getPersons();
         UniqueEntityList<Driver> deepCopyDrivers = new UniqueEntityList<>();
-        for(Driver driver: drivers) {
-            deepCopyDrivers.add((Driver) deepCopy(driver));
+        for (Driver driver: drivers) {
+            deepCopyDrivers.add(driver.deepCopyDriver());
         }
         return deepCopyDrivers.asUnmodifiableObservableList();
     }
@@ -96,23 +92,5 @@ public class DriverManager extends EntityManager<Driver> {
 
         DriverManager otherObject = (DriverManager) o;
         return getDriverList().equals(otherObject.getDriverList());
-    }
-
-    /**
-     * Makes a deep copy of any Java object that is passed.
-     */
-    private static Object deepCopy(Object object) {
-        try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ObjectOutputStream outputStrm = new ObjectOutputStream(outputStream);
-            outputStrm.writeObject(object);
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-            ObjectInputStream objInputStream = new ObjectInputStream(inputStream);
-            return objInputStream.readObject();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }

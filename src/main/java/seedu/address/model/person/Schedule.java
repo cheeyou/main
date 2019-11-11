@@ -46,8 +46,20 @@ public class Schedule {
         schedule.add(afterWorkingHours);
     }
 
-    public NavigableSet<EventTime> getSchedule() {
-        return this.schedule;
+    /**
+     * Deep copies a (@code Schedule)
+     *
+     * @return deep-copied (@code Schedule)
+     */
+    public Schedule deepCopySchedule() {
+        Schedule deepCopySchedule = new Schedule();
+        for (EventTime eventTime : this.schedule) {
+            if (!(eventTime.equals(EventTime.parse("0000", START_WORK_TIME))
+                    || eventTime.equals(EventTime.parse(END_WORK_TIME, "2359")))) {
+                deepCopySchedule.schedule.add(eventTime.deepCopyEventTime());
+            }
+        }
+        return deepCopySchedule;
     }
 
 
